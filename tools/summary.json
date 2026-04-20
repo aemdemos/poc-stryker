@@ -1,0 +1,28 @@
+{
+  "analysis-summary": {
+    "status": "complete",
+    "metadata": {
+      "siteUrl": "https://www.stryker.com/us/en/",
+      "siteName": "www.stryker.com",
+      "analysisDate": "2026-04-20"
+    },
+    "metrics": {
+      "urlDiscoveryMethod": "unknown",
+      "totalPages": 2226,
+      "localeCount": 0,
+      "locales": [],
+      "totalTemplates": 147,
+      "totalBlockTypes": 33,
+      "unknownBlockVariants": 7,
+      "edsBlockVariants": 26,
+      "pagesAnalyzed": 2222,
+      "percentAnalyzed": 100,
+      "pagesPending": 2,
+      "pagesFailed": 4,
+      "blockDetectionCrashes": 0
+    },
+    "errors": {
+      "totalCount": 93
+    }
+  }
+}
