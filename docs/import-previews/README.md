@@ -1,6 +1,6 @@
 # Import preview (Markdown)
 
-Helix-style markdown produced by [`tools/importer/stryker-capability-portfolio-hub.import.js`](../tools/importer/stryker-capability-portfolio-hub.import.js) (via `npm run import:stryker-capability`).
+Helix-style markdown produced by [`tools/importer/stryker-capability-portfolio-hub.import.js`](../tools/importer/stryker-capability-portfolio-hub.import.js) (via `npm run import:stryker-capability`). **Source URLs** for that command are listed in [`tools/library-pages.md`](../tools/library-pages.md).
 
 | Source | Markdown |
 |--------|----------|
