@@ -228,32 +228,53 @@ button.secondary:hover {
 }
 
 /* === Section: press (article body) ===
- * Matches the original 8-column (66.67%) article body layout.
- * Source: .container > .row > .col-sm-8 > .c-rich-text-editor
- * Extracted at 1440px viewport from stryker.com press release pages.
+ * Matches the original 8-column (66.67%) left-aligned article body.
  *
- * Original computed values:
- *   outer .container: max-width 1410px, padding 0 15px, margin 0 15px
- *   .col-sm-8: width 940px (66.67% of 1410), padding 0 15px
- *   .c-rich-text-editor inner: width 910px (940 - 30px padding)
- *   paragraph: font 14px/19.25px HumanistSlab712W01, margin 0 0 15px, color #000
- *   standalone-link: Futura LT W01 700, 14px, uppercase, color #4c7d7a, no underline
+ * Extracted computed values at 3 breakpoints:
+ *
+ * 1440px desktop:
+ *   Section 1 (title): container 1410px wide, h1 content 1380px, left 30px
+ *   Section 2 (body):  col-sm-8 = 940px (66.67%), paragraph 910px, left 30px
+ *   Both share: outer container max-width 1410px, padding 0 15px, margin 0 15px
+ *
+ * 768px tablet:
+ *   Both sections: full width 768px, content 738px, padding 0 15px
+ *
+ * 375px mobile:
+ *   Both sections: full width 375px, content 345px, padding 0 15px
+ *
+ * Typography (all breakpoints):
+ *   paragraph: 14px/19.25px HumanistSlab712W01, margin 0 0 15px, color #000
+ *   body link: 14px HumanistSlab712W01 400, color #4c7d7a, no decoration
+ *   standalone-link: Futura LT W01 700, 14px, uppercase, color #4c7d7a
  */
+
+/* Mobile-first: full width, 15px padding (matches 375px + 768px) */
 main .section.press {
   padding: 0;
 }
 
 main .section.press > div {
-  max-width: 1410px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 0 15px;
 }
 
-@media (width >= 900px) {
+/* Desktop (≥768px): 66.67% column, left-aligned */
+@media (width >= 768px) {
   main .section.press > div {
     max-width: 940px;
-    margin: 0;
-    padding: 0 30px;
+    margin: 0 0 0 15px;
+    padding: 0 15px;
+  }
+}
+
+/* Wide desktop (≥1440px): maintain 940px within 1410px outer */
+@media (width >= 1440px) {
+  main .section.press > div {
+    max-width: 940px;
+    margin: 0 0 0 15px;
+    padding: 0 15px;
   }
 }
 
