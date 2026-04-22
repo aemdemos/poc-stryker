@@ -227,6 +227,66 @@ button.secondary:hover {
   background-color: #434746;
 }
 
+/* === Section: press (article body) ===
+ * Matches the original 8-column (66.67%) article body layout.
+ * Source: .container > .row > .col-sm-8 > .c-rich-text-editor
+ * Extracted at 1440px viewport from stryker.com press release pages.
+ *
+ * Original computed values:
+ *   outer .container: max-width 1410px, padding 0 15px, margin 0 15px
+ *   .col-sm-8: width 940px (66.67% of 1410), padding 0 15px
+ *   .c-rich-text-editor inner: width 910px (940 - 30px padding)
+ *   paragraph: font 14px/19.25px HumanistSlab712W01, margin 0 0 15px, color #000
+ *   standalone-link: Futura LT W01 700, 14px, uppercase, color #4c7d7a, no underline
+ */
+main .section.press {
+  padding: 0;
+}
+
+main .section.press > div {
+  max-width: 1410px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+@media (width >= 900px) {
+  main .section.press > div {
+    max-width: 940px;
+    margin: 0;
+    padding: 0 30px;
+  }
+}
+
+main .section.press p {
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 19.25px;
+  color: rgb(0, 0, 0);
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+main .section.press a {
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(76, 125, 122);
+  text-decoration: none;
+}
+
+main .section.press a:hover {
+  text-decoration: underline;
+}
+
+main .section.press a strong,
+main .section.press a b {
+  font-family: var(--ui-font-family);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 /* === Section variants === */
 main .section.dark {
   background-color: var(--color-dark-gray);
