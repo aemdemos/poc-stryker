@@ -1,0 +1,32 @@
+/* Social Share Block */
+main .social-share {
+  display: flex;
+  gap: 10px;
+  padding: 15px 0;
+}
+
+main .social-share .social-share-item {
+  display: inline-flex;
+}
+
+main .social-share .social-share-item a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  background-color: var(--color-teal);
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+main .social-share .social-share-item a:hover {
+  background-color: var(--link-hover-color);
+}
+
+main .social-share .social-share-item .icon {
+  width: 16px;
+  height: 16px;
+}
