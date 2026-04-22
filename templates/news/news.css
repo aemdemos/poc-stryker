@@ -251,7 +251,10 @@ button.secondary:hover {
 
 /* Mobile-first: full width, 15px padding (matches 375px + 768px) */
 main .section.press {
-  padding: 0;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 main .section.press > div {
@@ -342,4 +345,10 @@ footer a {
 
 footer a:hover {
   color: var(--color-gold);
+}
+
+@media (width > 1440px) {
+  main .section.press > div {
+    max-width: 1410px;
+  }
 }
