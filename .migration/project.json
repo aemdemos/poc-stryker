@@ -1,5 +1,5 @@
 {
   "type": "xwalk",
   "libraryUrl": "https://main--poc-stryker--aemdemos.aem.page/docs/library/blocks.json",
-  "contentHostUrl": "https://content.da.live/aemdemos/poc-stryker/"
+  "contentHostUrl": "content.da.live"
 }
