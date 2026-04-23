@@ -1,0 +1,84 @@
+{
+  "templates": [
+    {
+      "name": "portfolio-category",
+      "urls": [
+        "https://www.stryker.com/us/en/portfolios/medical-surgical-equipment/bedframes.html"
+      ],
+      "description": "Portfolio product category page showcasing a product line with hero, product features, related products, and resources",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".c-page-hero-content"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            ".c-high-level-cta .cta-container",
+            ".c-filtered-content-type-grid .products-container"
+          ]
+        },
+        {
+          "name": "columns",
+          "instances": [
+            ".c-feature-content-context .feature-content-context-content"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-hero",
+          "name": "Page Hero",
+          "selector": ".c-page-hero",
+          "style": null,
+          "blocks": [
+            "hero"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-category-ctas",
+          "name": "Category Navigation Cards",
+          "selector": ".c-high-level-cta",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-product-grid",
+          "name": "Product Grid",
+          "selector": ".c-filtered-content-type-grid",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-featured-content",
+          "name": "Featured Content",
+          "selector": ".c-feature-content-context",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-disclaimer",
+          "name": "Disclaimer",
+          "selector": ".c-disclaimer",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "#publishedDate"
+          ]
+        }
+      ]
+    }
+  ]
+}

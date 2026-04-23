@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/portfolios/medical-surgical-equipment/bedframes.html",
+  "path": "us/en/portfolios/medical-surgical-equipment/bedframes",
+  "timestamp": "2026-04-21T20:50:17.531Z",
+  "title": "Bed frames | Stryker",
+  "template": "portfolio-category",
+  "blocks": [
+    "hero",
+    "cards",
+    "cards",
+    "columns"
+  ]
+}
