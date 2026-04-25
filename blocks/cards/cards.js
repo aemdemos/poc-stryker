@@ -11,7 +11,11 @@ export default function decorate(block) {
 
   /* change to ul, li */
   const ul = document.createElement('ul');
+  // eslint-disable-next-line no-console
+  console.log('[cards] rows:', block.children.length, 'first row children:', block.firstElementChild?.children.length, 'variant:', block.classList.toString());
   [...block.children].forEach((row) => {
+    // eslint-disable-next-line no-console
+    console.log('[cards] row children:', [...row.children].map((c) => `${c.tagName}(${c.children.length}): ${c.textContent.trim().substring(0, 60)}`));
     ul.append(createCard(row));
   });
   ul.querySelectorAll('picture > img').forEach((img) => {

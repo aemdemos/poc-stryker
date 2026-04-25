@@ -39,7 +39,7 @@ export default function decorate(block) {
 
     filter.options.forEach((opt) => {
       const option = document.createElement('option');
-      option.value = opt.toLowerCase().replace(/\s+/g, '-');
+      option.value = opt;
       option.textContent = opt;
       select.append(option);
     });
@@ -50,21 +50,27 @@ export default function decorate(block) {
 
   block.append(wrapper);
 
-  wrapper.addEventListener('change', () => {
-    const section = block.closest('.section');
-    if (!section) return;
+  const section = block.closest('.section');
+  if (!section) return;
 
-    const cards = section.querySelectorAll('.cards.product .card');
+  const cardsBlock = section.querySelector('.cards.product');
+  if (!cardsBlock) return;
+
+  const cards = [...cardsBlock.querySelectorAll('li')];
+
+  wrapper.addEventListener('change', () => {
     const activeFilters = [...wrapper.querySelectorAll('select')].map((s) => ({
       label: s.dataset.filter,
       value: s.value,
     }));
 
     cards.forEach((card) => {
-      const tags = card.dataset.tags || '';
-      const visible = activeFilters.every(
-        (f) => f.value === 'all' || tags.split(',').some((t) => t.trim() === f.value),
-      );
+      const tagData = card.dataset.tags ? JSON.parse(card.dataset.tags) : {};
+      const visible = activeFilters.every((f) => {
+        if (f.value === 'all') return true;
+        const cardValues = tagData[f.label] || [];
+        return cardValues.includes(f.value);
+      });
       card.style.display = visible ? '' : 'none';
     });
   });
