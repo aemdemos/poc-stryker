@@ -5,6 +5,7 @@
 import heroParser from './parsers/hero.js';
 import cardsParser from './parsers/cards.js';
 import columnsParser from './parsers/columns.js';
+import productFiltersParser from './parsers/product-filters.js';
 
 // TRANSFORMER IMPORTS
 import strykerCleanupTransformer from './transformers/stryker-cleanup.js';
@@ -29,6 +30,12 @@ const PAGE_TEMPLATE = {
       instances: [
         '.c-high-level-cta .cta-container',
         '.c-filtered-content-type-grid .products-container',
+      ],
+    },
+    {
+      name: 'product-filters',
+      instances: [
+        '.c-filtered-content-type-grid .filters-container',
       ],
     },
     {
@@ -60,7 +67,7 @@ const PAGE_TEMPLATE = {
       name: 'Product Grid',
       selector: '.c-filtered-content-type-grid',
       style: null,
-      blocks: ['cards'],
+      blocks: ['product-filters', 'cards'],
       defaultContent: [],
     },
     {
@@ -82,10 +89,11 @@ const PAGE_TEMPLATE = {
   ],
 };
 
-// PARSER REGISTRY
+// PARSER REGISTRY — cards must run before product-filters so it can read the <select> options
 const parsers = {
   'hero': heroParser,
   'cards': cardsParser,
+  'product-filters': productFiltersParser,
   'columns': columnsParser,
 };
 

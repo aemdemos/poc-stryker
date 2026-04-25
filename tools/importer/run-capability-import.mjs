@@ -25,7 +25,7 @@ const LIBRARY_PAGES = join(REPO_ROOT, 'tools', 'library-pages.md');
  * @returns {string[]}
  */
 function loadStrykerCapabilityUrlsFromLibraryPages(md) {
-  const re = /https:\/\/www\.stryker\.com\/us\/en\/portfolios\/medical-surgical-equipment\/[^\s)`"<>]+\.html/g;
+  const re = /https:\/\/www\.stryker\.com\/us\/en\/portfolios\/[^\s)`"<>]+\.html/g;
   const seen = new Set();
   const urls = [];
   for (const m of md.matchAll(re)) {

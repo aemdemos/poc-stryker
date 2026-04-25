@@ -66,6 +66,24 @@ export default function parse(element, { document }) {
       }
     });
   } else if (isProductGrid) {
+    // Build tag-path → display-label lookup from sibling filter dropdowns
+    const tagLabelMap = new Map();
+    const filterLabels = new Map();
+    const gridRoot = element.closest('.c-filtered-content-type-grid') || element.parentElement;
+    if (gridRoot) {
+      gridRoot.querySelectorAll('.filters-container select').forEach((sel) => {
+        const filterName = sel.id
+          || sel.closest('[class*="col-"]')?.querySelector('.filter-name')?.textContent?.trim()
+          || '';
+        [...sel.options].forEach((opt) => {
+          if (opt.value && opt.value !== 'all') {
+            tagLabelMap.set(opt.value, opt.textContent.trim());
+            filterLabels.set(opt.value, filterName);
+          }
+        });
+      });
+    }
+
     // Product grid cards
     const productItems = element.querySelectorAll('.product-item');
     productItems.forEach((item) => {
@@ -111,6 +129,35 @@ export default function parse(element, { document }) {
         const flagP = document.createElement('p');
         flagP.textContent = flagEl.textContent.trim();
         textCell.append(flagP);
+      }
+
+      // Resolve data-tags to human-readable filter labels grouped by filter name
+      const rawTags = item.getAttribute('data-tags') || '';
+      if (rawTags && tagLabelMap.size > 0) {
+        const tagPaths = rawTags.split(',').map((t) => t.trim());
+        const grouped = new Map();
+        tagPaths.forEach((tp) => {
+          const label = tagLabelMap.get(tp);
+          const filterName = filterLabels.get(tp);
+          if (label && filterName) {
+            if (!grouped.has(filterName)) grouped.set(filterName, []);
+            grouped.get(filterName).push(label);
+          }
+        });
+        if (grouped.size > 0) {
+          const tagsCell = document.createElement('div');
+          grouped.forEach((values, fName) => {
+            const p = document.createElement('p');
+            p.textContent = `${fName}: ${values.join(', ')}`;
+            tagsCell.append(p);
+          });
+          if (img) {
+            cells.push([img, textCell, tagsCell]);
+          } else {
+            cells.push([textCell, tagsCell]);
+          }
+          return;
+        }
       }
 
       if (img) {

@@ -72,7 +72,7 @@ function shouldTransform(document, url) {
   const isCapability = body.dataset?.template === 'capability' || body.classList.contains('capability');
   if (!isCapability) return false;
   const p = url.pathname || '';
-  return p.includes('/portfolios/medical-surgical-equipment/');
+  return p.includes('/portfolios/');
 }
 
 /**

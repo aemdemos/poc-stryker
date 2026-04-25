@@ -49,15 +49,20 @@ export default function transform(hookName, element, payload) {
       '.g-hcpbanner',
     ]);
 
-    // Remove back-to-top button, no-results placeholders, filter UI
+    // Remove back-to-top button, no-results placeholders
     WebImporter.DOMUtils.remove(element, [
       '.c-back-to-top',
       '.no-results',
       '.button-container',
-      '.filters-container',
       '.filter-content',
-      '.section-title',
     ]);
+
+    // Remove .section-title only outside the product grid (preserve sub-group headings inside it)
+    element.querySelectorAll('.section-title').forEach((el) => {
+      if (!el.closest('.c-filtered-content-type-grid')) {
+        el.remove();
+      }
+    });
 
     // Remove breadcrumb-related elements
     WebImporter.DOMUtils.remove(element, [
