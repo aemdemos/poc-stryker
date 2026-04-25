@@ -107,6 +107,21 @@ var CustomImportScript = (() => {
         }
       });
     } else if (isProductGrid) {
+      const tagLabelMap = /* @__PURE__ */ new Map();
+      const filterLabels = /* @__PURE__ */ new Map();
+      const gridRoot = element.closest(".c-filtered-content-type-grid") || element.parentElement;
+      if (gridRoot) {
+        gridRoot.querySelectorAll(".filters-container select").forEach((sel) => {
+          var _a, _b, _c;
+          const filterName = sel.id || ((_c = (_b = (_a = sel.closest('[class*="col-"]')) == null ? void 0 : _a.querySelector(".filter-name")) == null ? void 0 : _b.textContent) == null ? void 0 : _c.trim()) || "";
+          [...sel.options].forEach((opt) => {
+            if (opt.value && opt.value !== "all") {
+              tagLabelMap.set(opt.value, opt.textContent.trim());
+              filterLabels.set(opt.value, filterName);
+            }
+          });
+        });
+      }
       const productItems = element.querySelectorAll(".product-item");
       productItems.forEach((item) => {
         const link = item.querySelector(":scope > a[href]");
@@ -145,6 +160,29 @@ var CustomImportScript = (() => {
           const flagP = document.createElement("p");
           flagP.textContent = flagEl.textContent.trim();
           textCell.append(flagP);
+        }
+        const rawTags = item.getAttribute("data-tags") || "";
+        if (rawTags && tagLabelMap.size > 0) {
+          const tagPaths = rawTags.split(",").map((t) => t.trim());
+          const grouped = /* @__PURE__ */ new Map();
+          tagPaths.forEach((tp) => {
+            const label = tagLabelMap.get(tp);
+            const filterName = filterLabels.get(tp);
+            if (label && filterName) {
+              if (!grouped.has(filterName)) grouped.set(filterName, []);
+              grouped.get(filterName).push(label);
+            }
+          });
+          if (grouped.size > 0) {
+            const anchor = textCell.querySelector("a[href]");
+            if (anchor) {
+              const tagObj = {};
+              grouped.forEach((values, fName) => {
+                tagObj[fName] = values;
+              });
+              anchor.setAttribute("href", `${anchor.getAttribute("href")}#tags=${encodeURIComponent(JSON.stringify(tagObj))}`);
+            }
+          }
         }
         if (img) {
           cells.push([img, textCell]);
@@ -221,6 +259,39 @@ var CustomImportScript = (() => {
     }
   }
 
+  // tools/importer/parsers/product-filters.js
+  function parse4(element, { document }) {
+    const selects = element.querySelectorAll("select");
+    if (selects.length === 0) return;
+    const cells = [];
+    selects.forEach((select) => {
+      var _a, _b, _c;
+      const label = select.id || ((_c = (_b = (_a = select.closest('[class*="col-"]')) == null ? void 0 : _a.querySelector(".filter-name")) == null ? void 0 : _b.textContent) == null ? void 0 : _c.trim()) || "Filter";
+      const options = [...select.options].filter((o) => o.value !== "all" && o.textContent.trim().toLowerCase() !== "show all").map((o) => o.textContent.trim()).filter(Boolean);
+      if (options.length > 0) {
+        const labelCell = document.createElement("div");
+        labelCell.textContent = "Filter";
+        const labelVal = document.createElement("div");
+        labelVal.textContent = label;
+        cells.push([labelCell, labelVal]);
+        const optCell = document.createElement("div");
+        optCell.textContent = "Options";
+        const optVal = document.createElement("div");
+        optVal.textContent = options.join(", ");
+        cells.push([optCell, optVal]);
+      }
+    });
+    if (cells.length > 0) {
+      const block = WebImporter.Blocks.createBlock(document, {
+        name: "Product Filters",
+        cells
+      });
+      element.replaceWith(block);
+    } else {
+      element.remove();
+    }
+  }
+
   // tools/importer/transformers/stryker-cleanup.js
   var H = { before: "beforeTransform", after: "afterTransform" };
   function transform(hookName, element, payload) {
@@ -260,10 +331,13 @@ var CustomImportScript = (() => {
         ".c-back-to-top",
         ".no-results",
         ".button-container",
-        ".filters-container",
-        ".filter-content",
-        ".section-title"
+        ".filter-content"
       ]);
+      element.querySelectorAll(".section-title").forEach((el) => {
+        if (!el.closest(".c-filtered-content-type-grid")) {
+          el.remove();
+        }
+      });
       WebImporter.DOMUtils.remove(element, [
         '[class*="breadcrumb"]'
       ]);
@@ -335,6 +409,12 @@ var CustomImportScript = (() => {
         ]
       },
       {
+        name: "product-filters",
+        instances: [
+          ".c-filtered-content-type-grid .filters-container"
+        ]
+      },
+      {
         name: "columns",
         instances: [
           ".c-feature-content-context .feature-content-context-content"
@@ -363,7 +443,7 @@ var CustomImportScript = (() => {
         name: "Product Grid",
         selector: ".c-filtered-content-type-grid",
         style: null,
-        blocks: ["cards"],
+        blocks: ["product-filters", "cards"],
         defaultContent: []
       },
       {
@@ -387,6 +467,7 @@ var CustomImportScript = (() => {
   var parsers = {
     "hero": parse,
     "cards": parse2,
+    "product-filters": parse4,
     "columns": parse3
   };
   var transformers = [

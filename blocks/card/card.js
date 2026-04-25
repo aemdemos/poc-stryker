@@ -12,29 +12,8 @@ export function createCard(row) {
   moveInstrumentation(row, li);
   while (row.firstElementChild) li.append(row.firstElementChild);
   [...li.children].forEach((div) => {
-    if (div.children.length === 1 && div.querySelector('picture')) {
-      div.className = 'cards-card-image';
-    } else if (div.textContent.includes(':') && !div.querySelector('h1,h2,h3,h4,h5,h6,a,picture')) {
-      const text = div.textContent.trim();
-      const tags = {};
-      text.split('\n').forEach((line) => {
-        const l = line.trim();
-        const idx = l.indexOf(':');
-        if (idx > 0) {
-          const key = l.substring(0, idx).trim();
-          const vals = l.substring(idx + 1).split(',').map((v) => v.trim()).filter(Boolean);
-          if (vals.length) tags[key] = vals;
-        }
-      });
-      if (Object.keys(tags).length) {
-        li.dataset.tags = JSON.stringify(tags);
-        div.remove();
-      } else {
-        div.className = 'cards-card-body';
-      }
-    } else {
-      div.className = 'cards-card-body';
-    }
+    if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-card-image';
+    else div.className = 'cards-card-body';
   });
   return li;
 }

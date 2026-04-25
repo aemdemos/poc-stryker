@@ -131,7 +131,7 @@ export default function parse(element, { document }) {
         textCell.append(flagP);
       }
 
-      // Resolve data-tags to human-readable filter labels grouped by filter name
+      // Encode filter tags as a hash fragment on the product link
       const rawTags = item.getAttribute('data-tags') || '';
       if (rawTags && tagLabelMap.size > 0) {
         const tagPaths = rawTags.split(',').map((t) => t.trim());
@@ -145,18 +145,12 @@ export default function parse(element, { document }) {
           }
         });
         if (grouped.size > 0) {
-          const tagsCell = document.createElement('div');
-          grouped.forEach((values, fName) => {
-            const p = document.createElement('p');
-            p.textContent = `${fName}: ${values.join(', ')}`;
-            tagsCell.append(p);
-          });
-          if (img) {
-            cells.push([img, textCell, tagsCell]);
-          } else {
-            cells.push([textCell, tagsCell]);
+          const anchor = textCell.querySelector('a[href]');
+          if (anchor) {
+            const tagObj = {};
+            grouped.forEach((values, fName) => { tagObj[fName] = values; });
+            anchor.setAttribute('href', `${anchor.getAttribute('href')}#tags=${encodeURIComponent(JSON.stringify(tagObj))}`);
           }
-          return;
         }
       }
 
