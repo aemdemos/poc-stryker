@@ -133,10 +133,8 @@ function parseProductFilters(element, { document }) {
     const keyCell = document.createElement('div');
     keyCell.textContent = key;
     const valCell = document.createElement('div');
-    valCell.textContent = value;
-    const srcCell = document.createElement('div');
-    srcCell.textContent = source;
-    cells.push([keyCell, valCell, srcCell]);
+    valCell.textContent = source ? `${value} [source: ${source}]` : value;
+    cells.push([keyCell, valCell]);
   };
 
   const body = document.body || document.querySelector('body');

@@ -1,32 +1,76 @@
-export default function decorate(block) {
-  const rows = [...block.children];
+export default async function decorate(block) {
   const taxonomy = [];
   const filters = [];
   const products = [];
 
-  rows.forEach((row) => {
+  // Parse what the server delivers (2-column rows that survived server-side normalization)
+  const serverRows = [...block.children];
+  let currentFilter = null;
+
+  serverRows.forEach((row) => {
     const cells = [...row.children];
     const key = cells[0]?.textContent.trim();
-    const val = cells[1]?.textContent.trim();
-    const src = cells[2]?.textContent.trim() || '';
+    const raw = cells[1]?.textContent.trim() || '';
+    const value = raw.replace(/\s*\[source:.*\]$/, '');
+    const sourceMatch = raw.match(/\[source:\s*(.*)\]$/);
+    const source = sourceMatch ? sourceMatch[1] : '';
 
     if (key.startsWith('Page ')) {
-      taxonomy.push({ label: key.replace('Page ', ''), value: val, source: src });
-    } else if (key.startsWith('Filter:')) {
-      filters.push({ label: key.replace('Filter: ', ''), options: val, source: src });
+      taxonomy.push({ label: key.replace('Page ', ''), value, source });
+    } else if (key === 'Filter' || key.startsWith('Filter:')) {
+      currentFilter = { label: value, options: '', source };
+      filters.push(currentFilter);
+    } else if (key === 'Options' && currentFilter) {
+      currentFilter.options = value;
+      currentFilter.optionsSource = source;
     } else if (key.startsWith('Filter tag paths:')) {
-      const last = filters[filters.length - 1];
-      if (last) last.tagPaths = val;
+      if (currentFilter) {
+        currentFilter.tagPaths = value;
+        currentFilter.tagPathsSource = source;
+      }
     } else if (key === 'Product') {
-      const parts = val.split(' :: ');
-      products.push({
-        name: parts[0] || '',
-        pagePath: parts[1] || '',
-        tags: parts[2] || '',
-        source: src,
-      });
+      const parts = value.split(' :: ');
+      products.push({ name: parts[0] || '', pagePath: parts[1] || '', tags: parts[2] || '', source });
     }
   });
+
+  // If taxonomy/products are missing, fetch from .plain.html (server strips them)
+  if (!taxonomy.length || !products.length) {
+    try {
+      const resp = await fetch(`${window.location.pathname}.plain.html`);
+      if (resp.ok) {
+        const html = await resp.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const pfBlock = doc.querySelector('.product-filters');
+        if (pfBlock) {
+          [...pfBlock.children].forEach((row) => {
+            const cells = [...row.children];
+            const key = cells[0]?.textContent.trim();
+            const raw = cells[1]?.textContent.trim() || '';
+            const value = raw.replace(/\s*\[source:.*\]$/, '');
+            const sourceMatch = raw.match(/\[source:\s*(.*)\]$/);
+            const source = sourceMatch ? sourceMatch[1] : '';
+
+            if (key.startsWith('Page ') && !taxonomy.some((t) => t.label === key.replace('Page ', ''))) {
+              taxonomy.push({ label: key.replace('Page ', ''), value, source });
+            } else if (key.startsWith('Filter tag paths:') && filters.length) {
+              const last = filters[filters.length - 1];
+              if (!last.tagPaths) {
+                last.tagPaths = value;
+                last.tagPathsSource = source;
+              }
+            } else if (key === 'Product') {
+              const parts = value.split(' :: ');
+              products.push({ name: parts[0] || '', pagePath: parts[1] || '', tags: parts[2] || '', source });
+            }
+          });
+        }
+      }
+    } catch {
+      // fetch failed, show what we have
+    }
+  }
 
   block.textContent = '';
 
@@ -73,9 +117,9 @@ export default function decorate(block) {
     block.append(buildTable(
       ['Filter Name', 'Options', 'Source'],
       filters.flatMap((f) => {
-        const rows2 = [[f.label, f.options, f.source]];
-        if (f.tagPaths) rows2.push([`${f.label} (tag paths)`, f.tagPaths, 'JCR tag paths from <option> values']);
-        return rows2;
+        const r = [[f.label, f.options, f.optionsSource || f.source]];
+        if (f.tagPaths) r.push([`${f.label} (tag paths)`, f.tagPaths, f.tagPathsSource || '']);
+        return r;
       }),
     ));
   }
