@@ -32,4 +32,29 @@
     flex: 1;
     order: unset;
   }
+
+  main .section.press > div> h1 {
+    font-family: "Futura LT W01", Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 28px;
+  }
+
+  /* Press article column width; lives here so it loads with row flex rules (block CSS after template) */
+  main .section.press .columns > div {
+    width: 66.66%;
+  }
+
+  main .section.press .columns > div > div > p {
+    font-size:14px; 
+    line-height: 1.375;
+    font-family: "HumanistSlab712W01",Cambria,Palatino,serif;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  main .section.press .columns > div > div > p a {
+    font-family: "Futura LT W01", Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #4c7d7a;
+  }
 }

@@ -1,5 +1,5 @@
 {
-    "libraryUrl": "https://main--ise-boilerplate--aemdemos.aem.page/docs/library/blocks.json",
-    "type": "da",
-    "contentHostUrl": "content.da.live"
-  }
+  "type": "da",
+  "libraryUrl": "https://main--poc-stryker--aemdemos.aem.page/docs/library/blocks.json",
+  "contentHostUrl": "https://da.live/#/aemdemos/poc-stryker"
+}
