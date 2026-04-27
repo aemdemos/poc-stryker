@@ -21,6 +21,12 @@
   display: block;
 }
 
+/* Product hero styling — first section columns get gold border separator */
+main > .section:first-of-type .columns {
+  padding-bottom: var(--spacing-section);
+  border-bottom: 1px solid var(--color-border);
+}
+
 @media (width >= 900px) {
   .columns > div {
     align-items: center;

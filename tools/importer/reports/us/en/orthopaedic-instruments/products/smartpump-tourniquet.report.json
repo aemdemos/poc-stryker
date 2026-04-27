@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/orthopaedic-instruments/products/smartpump-tourniquet.html",
+  "path": "us/en/orthopaedic-instruments/products/smartpump-tourniquet",
+  "timestamp": "2026-04-27T21:50:49.577Z",
+  "title": "SmartPump Tourniquet System | Stryker",
+  "template": "product-detail",
+  "blocks": [
+    "columns",
+    "columns",
+    "columns",
+    "form"
+  ]
+}

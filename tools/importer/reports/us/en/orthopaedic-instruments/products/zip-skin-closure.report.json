@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/orthopaedic-instruments/products/zip-skin-closure.html",
+  "path": "us/en/orthopaedic-instruments/products/zip-skin-closure",
+  "timestamp": "2026-04-27T21:51:26.879Z",
+  "title": "Zip skin closure | Stryker",
+  "template": "product-detail",
+  "blocks": [
+    "columns",
+    "columns",
+    "form"
+  ]
+}

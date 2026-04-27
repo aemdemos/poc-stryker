@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/orthopaedic-instruments/products/steri-shield-8.html",
+  "path": "us/en/orthopaedic-instruments/products/steri-shield-8",
+  "timestamp": "2026-04-24T16:01:15.935Z",
+  "title": "Steri-Shield 8 | Stryker",
+  "template": "product-detail",
+  "blocks": [
+    "columns",
+    "columns",
+    "form"
+  ]
+}

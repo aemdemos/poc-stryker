@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/orthopaedic-instruments/products/stryker-f1-system-cordless-small-bone-power-tool-system.html",
+  "path": "us/en/orthopaedic-instruments/products/stryker-f1-system-cordless-small-bone-power-tool-system",
+  "timestamp": "2026-04-27T21:35:51.266Z",
+  "title": "Stryker F1 | Stryker",
+  "template": "product-detail",
+  "blocks": [
+    "columns",
+    "columns",
+    "form"
+  ]
+}

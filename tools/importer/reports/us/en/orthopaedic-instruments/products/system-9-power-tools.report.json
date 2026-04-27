@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/orthopaedic-instruments/products/System-9-Power-Tools.html",
+  "path": "us/en/orthopaedic-instruments/products/system-9-power-tools",
+  "timestamp": "2026-04-24T16:00:57.234Z",
+  "title": "System 9 Power Tools | Stryker",
+  "template": "product-detail",
+  "blocks": [
+    "columns",
+    "form"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "templates": [
+    {
+      "name": "product-detail",
+      "urls": [
+        "https://www.stryker.com/us/en/orthopaedic-instruments/products/smartpump-tourniquet.html"
+      ],
+      "description": "Universal orthopaedic instruments product detail page with 7 sections: hero, description, feature images, feature comparison, contact form, citations, regulatory.",
+      "blocks": [
+        {
+          "name": "columns",
+          "instances": [
+            ".c-page-hero-content",
+            "#product-detail-container > .row",
+            ".cols2_1-3_2-3 .colctrl"
+          ]
+        },
+        {
+          "name": "embed",
+          "instances": ["a[href*='media-assets.stryker.com/is/content/stryker']"]
+        },
+        {
+          "name": "form",
+          "instances": [".c-marketo-form"]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1-hero",
+          "name": "Product Hero",
+          "selector": ".pagehero",
+          "style": null,
+          "blocks": ["columns"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2-description",
+          "name": "Product Description",
+          "selector": "#product-detail-container",
+          "style": null,
+          "blocks": ["columns"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-3-features",
+          "name": "Feature Images and Banner",
+          "selector": ".fullWidthImage",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [".fullWidthImage .imgBoxId picture", ".c-largeheadline .largeheadline"]
+        },
+        {
+          "id": "section-4-comparison",
+          "name": "Feature Comparison",
+          "selector": [".cols2_1-3_2-3"],
+          "style": null,
+          "blocks": ["columns"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-5-contact",
+          "name": "Contact Form",
+          "selector": [".section-title", ".c-section-title"],
+          "style": null,
+          "blocks": ["form"],
+          "defaultContent": [".c-section-title h2"]
+        },
+        {
+          "id": "section-6-citations",
+          "name": "Citations",
+          "selector": "div.c-disclaimer.page-section:not(.container)",
+          "style": "c-disclaimer page-section",
+          "blocks": [],
+          "defaultContent": []
+        },
+        {
+          "id": "section-7-regulatory",
+          "name": "Regulatory",
+          "selector": "div.c-disclaimer:not(.page-section)",
+          "style": "c-disclaimer",
+          "blocks": [],
+          "defaultContent": []
+        }
+      ]
+    }
+  ]
+}

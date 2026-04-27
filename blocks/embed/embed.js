@@ -52,6 +52,14 @@ const loadEmbed = (block, link, autoplay) => {
       match: ['twitter', 'x.com'],
       embed: embedTwitter,
     },
+    {
+      match: ['media-assets.stryker.com/is/content'],
+      embed: (url, play) => `<div class="embed-dm-video">
+        <video controls ${play ? 'autoplay muted' : ''} preload="metadata">
+          <source src="${url.href}" type="video/mp4">
+        </video>
+      </div>`,
+    },
   ];
   const config = EMBEDS_CONFIG.find((e) => e.match.some((match) => link.includes(match)));
   const url = new URL(link);
