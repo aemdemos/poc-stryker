@@ -204,9 +204,9 @@ var CustomImportScript = (() => {
             const hasHighlight = !!rte.querySelector('.highlight, .gold, [class*="gold"]');
             const looksLikeQuote = parentBg || hasHighlight || text.startsWith('"') && text.length < 500 && text.includes("footsteps");
             if (looksLikeQuote) {
-              const quoteCell = document.createElement("td");
-              appendRte(rte, quoteCell);
-              main.append(createBlockTable("Quote", [[quoteCell]]));
+              const quoteDiv = document.createElement("div");
+              appendRte(rte, quoteDiv);
+              main.append(createBlockTable("Quote", [[quoteDiv]]));
             } else {
               appendRte(rte, main);
             }
