@@ -26,16 +26,16 @@ const PAGE_TEMPLATE = {
       ],
     },
     {
+      name: 'product-filters',
+      instances: [
+        '.c-filtered-content-type-grid',
+      ],
+    },
+    {
       name: 'cards',
       instances: [
         '.c-high-level-cta .cta-container',
         '.c-filtered-content-type-grid .products-container',
-      ],
-    },
-    {
-      name: 'product-filters',
-      instances: [
-        '.c-filtered-content-type-grid .filters-container',
       ],
     },
     {
@@ -89,11 +89,11 @@ const PAGE_TEMPLATE = {
   ],
 };
 
-// PARSER REGISTRY — cards must run before product-filters so it can read the <select> options
+// PARSER REGISTRY — product-filters reads the grid first (inserts block before it), then cards parses .products-container
 const parsers = {
   'hero': heroParser,
-  'cards': cardsParser,
   'product-filters': productFiltersParser,
+  'cards': cardsParser,
   'columns': columnsParser,
 };
 

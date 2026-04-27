@@ -2,47 +2,36 @@ main .product-filters {
   padding: 1rem 0;
 }
 
-main .product-filters .product-filters-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+main .product-filters h3 {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-s);
+  margin: 1.5rem 0 0.5rem;
 }
 
-main .product-filters .product-filters-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+main .product-filters h3:first-child {
+  margin-top: 0;
 }
 
-main .product-filters .product-filters-group label {
+main .product-filters table {
+  width: 100%;
+  border-collapse: collapse;
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-s);
+}
+
+main .product-filters th,
+main .product-filters td {
+  border: 1px solid var(--border-color, #e0e0e0);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+main .product-filters th {
+  background-color: var(--light-color, #f5f5f5);
   font-weight: 700;
-  color: var(--text-color);
 }
 
-main .product-filters .product-filters-group select {
-  font-family: var(--body-font-family);
-  font-size: var(--body-font-size-m);
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border: 1px solid var(--border-color, #ccc);
-  border-radius: 4px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  appearance: auto;
-  cursor: pointer;
-  width: 100%;
-}
-
-@media (width >= 600px) {
-  main .product-filters .product-filters-bar {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-  }
-
-  main .product-filters .product-filters-group select {
-    width: auto;
-    min-width: 200px;
-  }
+main .product-filters tbody tr:nth-child(even) {
+  background-color: var(--light-color, #fafafa);
 }
