@@ -101,6 +101,33 @@ async function processFile(htmlPath) {
   html = html.replace(/<img[^>]*-AVS[^>]*>/g, '');
   html = html.replace(/<ul>\s*<li>default<\/li>\s*<\/ul>/g, '');
 
+  // Remove empty H1 tags (Ortho Q double-H1 pattern has an empty first H1)
+  html = html.replace(/<h1 id="">\s*<\/h1>/g, '');
+
+  // Hero split: if the first section starts with an H1 followed by paragraphs and an image
+  // but NO columns block, split into a hero block + remaining content section.
+  // This handles Modern Rich pages (Ortho Q, etc.) where the hero isn't in a .pagehero container.
+  // Only apply to the first <div> section (line 1).
+  const firstDivMatch = html.match(/^(<div>)([\s\S]*?)(<\/div>)\n/);
+  if (firstDivMatch) {
+    const sectionContent = firstDivMatch[2];
+    // Only split if there's an H1 but NO columns block already
+    if (sectionContent.includes('<h1') && !sectionContent.includes('class="columns"')) {
+      // Find the first <img> — everything up to and including its <p> wrapper is the hero
+      const imgMatch = sectionContent.match(/([\s\S]*?<p>[^<]*<img [^>]+>[^<]*<\/p>)/);
+      if (imgMatch) {
+        const heroContent = imgMatch[1];
+        const restContent = sectionContent.slice(heroContent.length);
+
+        // Only split if there's meaningful content after the image
+        if (restContent.trim().length > 20) {
+          const heroBlock = `<div>${heroContent}</div>\n<div>${restContent}</div>\n`;
+          html = heroBlock + html.slice(firstDivMatch[0].length);
+        }
+      }
+    }
+  }
+
   await writeFile(htmlPath, html);
   return count;
 }
