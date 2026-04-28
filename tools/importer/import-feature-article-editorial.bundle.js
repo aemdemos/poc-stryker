@@ -149,14 +149,16 @@ var CustomImportScript = (() => {
       main.append(createSectionMetadata());
       main.append(document.createElement("hr"));
       const contentElements = document.querySelectorAll(
-        ".c-rich-text-editor, .largeheadline.has-background"
+        ".c-rich-text-editor, .c-standalone-image, .standaloneimage, .largeheadline.has-background"
       );
+      const seenImgSrcs = /* @__PURE__ */ new Set();
       contentElements.forEach((el) => {
         const cls = typeof el.className === "string" ? el.className : "";
         const text = el.textContent.trim();
-        if (!text) return;
+        const isImage = cls.includes("c-standalone-image") || cls.includes("standaloneimage");
+        if (!text && !isImage) return;
         if (el.closest("#onetrust-consent-sdk")) return;
-        if (text.startsWith("References")) return;
+        if (text && text.startsWith("References")) return;
         if (cls.includes("largeheadline") && cls.includes("has-background")) {
           if (el.closest("[role=\u201Dlistbox\u201D]")) return;
           if (el.closest(".c-autocarousel")) return;
@@ -164,8 +166,43 @@ var CustomImportScript = (() => {
           if (text.length > 10) {
             main.append(createQuoteBlock(text));
           }
+        } else if (cls.includes("c-standalone-image") || cls.includes("standaloneimage")) {
+          if (el.closest('[role="listbox"]')) return;
+          if (el.closest(".c-autocarousel")) return;
+          const img = el.querySelector("img");
+          if (img) {
+            const src = img.getAttribute("src") || "";
+            if (!src || src.includes("globe_icon")) return;
+            const cleanedSrc = cleanSrc(src);
+            if (seenImgSrcs.has(cleanedSrc)) return;
+            seenImgSrcs.add(cleanedSrc);
+            const p = document.createElement("p");
+            const ie = document.createElement("img");
+            ie.src = cleanedSrc;
+            ie.alt = img.alt || "";
+            p.append(ie);
+            main.append(p);
+          }
         } else if (cls.includes("c-rich-text-editor")) {
-          appendRte(el, main);
+          const dimBox = el.querySelector(".dimensional-box");
+          if (dimBox && dimBox.textContent.trim().length > 10) {
+            [...el.children].forEach((child) => {
+              const childCls = typeof child.className === "string" ? child.className : "";
+              if (childCls.includes("dimensional-box")) {
+                main.append(createQuoteBlock(child.textContent.trim()));
+              } else if (child.textContent.trim()) {
+                if (childCls.includes("left-to-right") || childCls.includes("right-to-left")) {
+                  [...child.children].forEach((ic) => {
+                    if (ic.textContent.trim()) main.append(ic.cloneNode(true));
+                  });
+                } else {
+                  main.append(child.cloneNode(true));
+                }
+              }
+            });
+          } else {
+            appendRte(el, main);
+          }
         }
       });
       main.append(createSectionMetadata());
