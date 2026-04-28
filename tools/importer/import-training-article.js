@@ -166,7 +166,7 @@ export default {
     main.appendChild(hr);
     WebImporter.rules.createMetadata(main, document);
     WebImporter.rules.transformBackgroundImages(main, document);
-    WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
+    // Removed adjustImageUrls — keep absolute CDN URLs so DA can access them
 
     // 6. Generate sanitized path
     const path = WebImporter.FileUtils.sanitizePath(

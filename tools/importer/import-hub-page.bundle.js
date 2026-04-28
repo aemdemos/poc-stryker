@@ -107,7 +107,7 @@ var CustomImportScript = (() => {
   }
   function parseBuildingBlocks(element, document2) {
     const blocks = element.querySelectorAll(".buildingblock");
-    if (!blocks.length) return null;
+    if (blocks.length < 2) return null;
     const cells = [];
     blocks.forEach((block) => {
       const imgLink = block.querySelector(".standaloneimage a");
@@ -131,10 +131,54 @@ var CustomImportScript = (() => {
         cells.push([imageCell, textCell]);
       }
     });
+    return cells.length >= 2 ? cells : null;
+  }
+  function parseLatestNews(element, document2) {
+    const items = element.querySelectorAll(".item");
+    if (!items.length) return null;
+    const cells = [];
+    items.forEach((item) => {
+      const img = item.querySelector(":scope > img");
+      const h3 = item.querySelector("h3");
+      const desc = item.querySelector(".description");
+      const link = item.querySelector("a.news-link");
+      const imageCell = [];
+      if (img) imageCell.push(img);
+      const textCell = [];
+      if (h3 && link) {
+        const heading = document2.createElement("h3");
+        const a = document2.createElement("a");
+        a.href = link.href;
+        a.textContent = h3.textContent.trim();
+        heading.appendChild(a);
+        textCell.push(heading);
+      } else if (h3) {
+        const heading = document2.createElement("h3");
+        heading.textContent = h3.textContent.trim();
+        textCell.push(heading);
+      }
+      if (desc && desc.textContent.trim()) {
+        const p = document2.createElement("p");
+        p.textContent = desc.textContent.trim();
+        textCell.push(p);
+      }
+      if (link) {
+        const p = document2.createElement("p");
+        const a = document2.createElement("a");
+        a.href = link.href;
+        a.textContent = link.textContent.trim();
+        p.appendChild(a);
+        textCell.push(p);
+      }
+      if (imageCell.length || textCell.length) {
+        cells.push([imageCell, textCell]);
+      }
+    });
     return cells;
   }
   function parse2(element, { document: document2 }) {
-    const cells = parseCustomizableItems(element, document2) || parseBuildingBlocks(element, document2);
+    const isLatestNews = !!element.querySelector(".c-latestnews, .latestnews-container");
+    const cells = isLatestNews ? parseLatestNews(element, document2) : parseCustomizableItems(element, document2) || parseBuildingBlocks(element, document2);
     if (!cells || !cells.length) return;
     const block = WebImporter.Blocks.createBlock(document2, { name: "cards", cells });
     element.replaceWith(block);
@@ -156,6 +200,13 @@ var CustomImportScript = (() => {
       );
       hiddenInputs.forEach((input) => input.remove());
       element.querySelectorAll(".carouselslidegroup p[id]").forEach((p) => p.remove());
+      element.querySelectorAll(".colctrl").forEach((col) => {
+        var _a;
+        const row = col.querySelector(":scope > .row");
+        if (row && row.textContent.trim() === "" && !row.querySelector("img, video, a")) {
+          (_a = col.closest(".cols, .cols2, .cols3, .cols4")) == null ? void 0 : _a.remove();
+        }
+      });
     }
     if (hookName === TransformHook.afterTransform) {
       WebImporter.DOMUtils.remove(element, [
@@ -270,7 +321,6 @@ var CustomImportScript = (() => {
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
-      WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
       const path = WebImporter.FileUtils.sanitizePath(
         new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html$/, "")
       );

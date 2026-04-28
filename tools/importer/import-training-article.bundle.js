@@ -41,45 +41,171 @@ var CustomImportScript = (() => {
   });
 
   // tools/importer/parsers/columns.js
+  function extractComponentContent(component, document2) {
+    const items = [];
+    const cls = component.className || "";
+    if (cls.includes("standaloneimage")) {
+      const imgLink = component.querySelector("a");
+      const img = component.querySelector("img");
+      if (imgLink && img) {
+        const link = document2.createElement("a");
+        link.href = imgLink.href;
+        link.appendChild(img.cloneNode(true));
+        items.push(link);
+      } else if (img) {
+        items.push(img);
+      }
+    } else if (cls.includes("largeheadline")) {
+      const lines = component.querySelectorAll(".line");
+      let headingText = "";
+      lines.forEach((line) => {
+        const t = line.textContent.trim();
+        if (t) headingText += (headingText ? " " : "") + t;
+      });
+      if (!headingText) headingText = component.textContent.trim();
+      if (headingText) {
+        const p = document2.createElement("p");
+        const strong = document2.createElement("strong");
+        strong.textContent = headingText;
+        p.appendChild(strong);
+        items.push(p);
+      }
+    } else if (cls.includes("text") && cls.includes("parbase") || component.querySelector(".c-rich-text-editor")) {
+      const richTextAreas = component.querySelectorAll('.c-rich-text-editor .left-to-right, .c-rich-text-editor [class*="left-to-right"]');
+      richTextAreas.forEach((area) => {
+        const contentElements = area.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol");
+        contentElements.forEach((el) => items.push(el));
+      });
+    } else if (cls.includes("curatedcta")) {
+      const cta = component.querySelector("a.btn");
+      if (cta) {
+        const p = document2.createElement("p");
+        const link = document2.createElement("a");
+        link.href = cta.href;
+        link.textContent = cta.textContent.trim();
+        p.appendChild(link);
+        items.push(p);
+      }
+    } else if (cls.includes("standalonevideo")) {
+      const dm = component.querySelector("[data-asset-name]");
+      if (dm) {
+        const server = dm.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+        const assetName = dm.getAttribute("data-asset-name");
+        if (assetName) {
+          const baseName = assetName.replace(/\.[^.]+$/, "");
+          const videoUrl = `${server}stryker/${baseName}`;
+          const link = document2.createElement("a");
+          link.href = videoUrl;
+          link.textContent = videoUrl;
+          items.push(link);
+        }
+      }
+    }
+    return items;
+  }
   function extractColumnContent(col, document2) {
     const cell = [];
-    const imgLink = col.querySelector(".standaloneimage a");
-    const img = col.querySelector(".standaloneimage img");
-    if (imgLink && img) {
-      const link = document2.createElement("a");
-      link.href = imgLink.href;
-      link.appendChild(img.cloneNode(true));
-      cell.push(link);
-    } else if (img) {
-      cell.push(img);
-    }
-    const richTextArea = col.querySelector('.c-rich-text-editor .left-to-right, .c-rich-text-editor [class*="left-to-right"]');
-    if (richTextArea) {
-      const contentElements = richTextArea.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol");
-      contentElements.forEach((el) => {
-        cell.push(el);
-      });
-    }
-    const cta = col.querySelector(".curatedcta a.btn");
-    if (cta) {
-      const ctaParagraph = document2.createElement("p");
-      const ctaLink = document2.createElement("a");
-      ctaLink.href = cta.href;
-      ctaLink.textContent = cta.textContent.trim();
-      ctaParagraph.appendChild(ctaLink);
-      cell.push(ctaParagraph);
-    }
+    const innerRow = col.querySelector(":scope > .row");
+    if (!innerRow) return cell;
+    const components = innerRow.querySelectorAll(":scope > div");
+    components.forEach((component) => {
+      const items = extractComponentContent(component, document2);
+      items.forEach((item) => cell.push(item));
+    });
     return cell;
   }
+  function isImageOnlyCell(cell) {
+    return cell.length === 1 && (cell[0].tagName === "IMG" || cell[0].tagName === "A");
+  }
+  function isTextOnlyCell(cell) {
+    return cell.length > 0 && cell.every((el) => {
+      var _a;
+      return !["IMG", "A"].includes(el.tagName) || ((_a = el.querySelector) == null ? void 0 : _a.call(el, "img")) === null;
+    });
+  }
+  function parseTextColumnsEF(element, document2) {
+    const grid = element.querySelector(".aem-Grid");
+    if (!grid) return null;
+    const textBlocks = grid.querySelectorAll(":scope > .text.parbase");
+    if (textBlocks.length < 2) return null;
+    const contentRow = [];
+    textBlocks.forEach((tb) => {
+      const cell = [];
+      const richTexts = tb.querySelectorAll('.c-rich-text-editor .left-to-right, .c-rich-text-editor [class*="left-to-right"]');
+      richTexts.forEach((rt) => {
+        const elements = rt.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol");
+        elements.forEach((el) => cell.push(el));
+      });
+      contentRow.push(cell);
+    });
+    return contentRow;
+  }
+  function parseImageGalleryEF(element, document2) {
+    const bb = element.querySelector(".buildingblock");
+    if (!bb) return null;
+    const grid = bb.querySelector(".xf-master-building-block, .aem-Grid");
+    if (!grid) return null;
+    const images = grid.querySelectorAll(":scope > .standaloneimage");
+    if (images.length < 2) return null;
+    const beforeElements = [];
+    const afterElements = [];
+    const imageRow = [];
+    let pastImages = false;
+    [...grid.children].forEach((child) => {
+      const cls = child.className || "";
+      if (cls.includes("standaloneimage")) {
+        const img = child.querySelector("img");
+        if (img) imageRow.push([img]);
+        pastImages = true;
+      } else if (!pastImages) {
+        const items = extractComponentContent(child, document2);
+        items.forEach((item) => beforeElements.push(item));
+      } else {
+        const items = extractComponentContent(child, document2);
+        items.forEach((item) => afterElements.push(item));
+      }
+    });
+    if (imageRow.length < 2) return null;
+    return { beforeElements, imageRow, afterElements };
+  }
   function parse(element, { document: document2 }) {
+    if (!element.isConnected) return;
+    if (element.classList.contains("experienceFragment")) {
+      const gallery = parseImageGalleryEF(element, document2);
+      if (gallery && gallery.imageRow.length >= 2) {
+        const container = document2.createElement("div");
+        gallery.beforeElements.forEach((el) => container.appendChild(el));
+        const block2 = WebImporter.Blocks.createBlock(document2, { name: "columns", cells: [gallery.imageRow] });
+        container.appendChild(block2);
+        gallery.afterElements.forEach((el) => container.appendChild(el));
+        element.replaceWith(container);
+        return;
+      }
+      const contentRow2 = parseTextColumnsEF(element, document2);
+      if (contentRow2 && contentRow2.length >= 2) {
+        const cells2 = [contentRow2];
+        const block2 = WebImporter.Blocks.createBlock(document2, { name: "columns", cells: cells2 });
+        element.replaceWith(block2);
+      }
+      return;
+    }
     const row = element.querySelector(":scope > .row");
     if (!row) return;
     const columns = row.querySelectorAll(':scope > [class*="col-"]');
     if (columns.length < 2) return;
-    const contentRow = [];
+    const rawCells = [];
     columns.forEach((col) => {
-      contentRow.push(extractColumnContent(col, document2));
+      rawCells.push(extractColumnContent(col, document2));
     });
+    let contentRow;
+    if (rawCells.length >= 4 && rawCells.length % 2 === 0 && rawCells.every((c, i) => i % 2 === 0 ? isImageOnlyCell(c) : isTextOnlyCell(c))) {
+      contentRow = [];
+      for (let i = 0; i < rawCells.length; i += 2) {
+        contentRow.push([...rawCells[i], ...rawCells[i + 1]]);
+      }
+    } else {
+      contentRow = rawCells;
+    }
     const cells = [contentRow];
     const block = WebImporter.Blocks.createBlock(document2, { name: "columns", cells });
     element.replaceWith(block);
@@ -100,8 +226,14 @@ var CustomImportScript = (() => {
         'input[id="indexUrl"], input[id^="hdn"], input[id="hiddenPublishedDate"], input[id="businessUnitTag"]'
       );
       hiddenInputs.forEach((input) => input.remove());
-      const carouselConfigs = element.querySelectorAll(".carouselslidegroup");
-      carouselConfigs.forEach((cfg) => cfg.remove());
+      element.querySelectorAll(".carouselslidegroup p[id]").forEach((p) => p.remove());
+      element.querySelectorAll(".colctrl").forEach((col) => {
+        var _a;
+        const row = col.querySelector(":scope > .row");
+        if (row && row.textContent.trim() === "" && !row.querySelector("img, video, a")) {
+          (_a = col.closest(".cols, .cols2, .cols3, .cols4")) == null ? void 0 : _a.remove();
+        }
+      });
     }
     if (hookName === TransformHook.afterTransform) {
       WebImporter.DOMUtils.remove(element, [
@@ -277,7 +409,6 @@ var CustomImportScript = (() => {
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
-      WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
       const path = WebImporter.FileUtils.sanitizePath(
         new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html$/, "")
       );

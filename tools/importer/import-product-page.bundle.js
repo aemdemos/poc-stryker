@@ -123,7 +123,72 @@ var CustomImportScript = (() => {
       return !["IMG", "A"].includes(el.tagName) || ((_a = el.querySelector) == null ? void 0 : _a.call(el, "img")) === null;
     });
   }
+  function parseTextColumnsEF(element, document2) {
+    const grid = element.querySelector(".aem-Grid");
+    if (!grid) return null;
+    const textBlocks = grid.querySelectorAll(":scope > .text.parbase");
+    if (textBlocks.length < 2) return null;
+    const contentRow = [];
+    textBlocks.forEach((tb) => {
+      const cell = [];
+      const richTexts = tb.querySelectorAll('.c-rich-text-editor .left-to-right, .c-rich-text-editor [class*="left-to-right"]');
+      richTexts.forEach((rt) => {
+        const elements = rt.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol");
+        elements.forEach((el) => cell.push(el));
+      });
+      contentRow.push(cell);
+    });
+    return contentRow;
+  }
+  function parseImageGalleryEF(element, document2) {
+    const bb = element.querySelector(".buildingblock");
+    if (!bb) return null;
+    const grid = bb.querySelector(".xf-master-building-block, .aem-Grid");
+    if (!grid) return null;
+    const images = grid.querySelectorAll(":scope > .standaloneimage");
+    if (images.length < 2) return null;
+    const beforeElements = [];
+    const afterElements = [];
+    const imageRow = [];
+    let pastImages = false;
+    [...grid.children].forEach((child) => {
+      const cls = child.className || "";
+      if (cls.includes("standaloneimage")) {
+        const img = child.querySelector("img");
+        if (img) imageRow.push([img]);
+        pastImages = true;
+      } else if (!pastImages) {
+        const items = extractComponentContent(child, document2);
+        items.forEach((item) => beforeElements.push(item));
+      } else {
+        const items = extractComponentContent(child, document2);
+        items.forEach((item) => afterElements.push(item));
+      }
+    });
+    if (imageRow.length < 2) return null;
+    return { beforeElements, imageRow, afterElements };
+  }
   function parse(element, { document: document2 }) {
+    if (!element.isConnected) return;
+    if (element.classList.contains("experienceFragment")) {
+      const gallery = parseImageGalleryEF(element, document2);
+      if (gallery && gallery.imageRow.length >= 2) {
+        const container = document2.createElement("div");
+        gallery.beforeElements.forEach((el) => container.appendChild(el));
+        const block2 = WebImporter.Blocks.createBlock(document2, { name: "columns", cells: [gallery.imageRow] });
+        container.appendChild(block2);
+        gallery.afterElements.forEach((el) => container.appendChild(el));
+        element.replaceWith(container);
+        return;
+      }
+      const contentRow2 = parseTextColumnsEF(element, document2);
+      if (contentRow2 && contentRow2.length >= 2) {
+        const cells2 = [contentRow2];
+        const block2 = WebImporter.Blocks.createBlock(document2, { name: "columns", cells: cells2 });
+        element.replaceWith(block2);
+      }
+      return;
+    }
     const row = element.querySelector(":scope > .row");
     if (!row) return;
     const columns = row.querySelectorAll(':scope > [class*="col-"]');
@@ -174,9 +239,9 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/cards.js
-  function parse3(element, { document: document2 }) {
+  function parseCustomizableItems(element, document2) {
     const items = element.querySelectorAll(".item");
-    if (!items.length) return;
+    if (!items.length) return null;
     const cells = [];
     items.forEach((item) => {
       const img = item.querySelector(".img-cont img");
@@ -209,6 +274,83 @@ var CustomImportScript = (() => {
       }
       cells.push([imageCell, textCell]);
     });
+    return cells;
+  }
+  function parseBuildingBlocks(element, document2) {
+    const blocks = element.querySelectorAll(".buildingblock");
+    if (blocks.length < 2) return null;
+    const cells = [];
+    blocks.forEach((block) => {
+      const imgLink = block.querySelector(".standaloneimage a");
+      const img = block.querySelector(".standaloneimage img");
+      const richTexts = block.querySelectorAll('.c-rich-text-editor .left-to-right, .c-rich-text-editor [class*="left-to-right"]');
+      const imageCell = [];
+      if (imgLink && img) {
+        const link = document2.createElement("a");
+        link.href = imgLink.href;
+        link.appendChild(img.cloneNode(true));
+        imageCell.push(link);
+      } else if (img) {
+        imageCell.push(img);
+      }
+      const textCell = [];
+      richTexts.forEach((rt) => {
+        const elements = rt.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol");
+        elements.forEach((el) => textCell.push(el));
+      });
+      if (imageCell.length || textCell.length) {
+        cells.push([imageCell, textCell]);
+      }
+    });
+    return cells.length >= 2 ? cells : null;
+  }
+  function parseLatestNews(element, document2) {
+    const items = element.querySelectorAll(".item");
+    if (!items.length) return null;
+    const cells = [];
+    items.forEach((item) => {
+      const img = item.querySelector(":scope > img");
+      const h3 = item.querySelector("h3");
+      const desc = item.querySelector(".description");
+      const link = item.querySelector("a.news-link");
+      const imageCell = [];
+      if (img) imageCell.push(img);
+      const textCell = [];
+      if (h3 && link) {
+        const heading = document2.createElement("h3");
+        const a = document2.createElement("a");
+        a.href = link.href;
+        a.textContent = h3.textContent.trim();
+        heading.appendChild(a);
+        textCell.push(heading);
+      } else if (h3) {
+        const heading = document2.createElement("h3");
+        heading.textContent = h3.textContent.trim();
+        textCell.push(heading);
+      }
+      if (desc && desc.textContent.trim()) {
+        const p = document2.createElement("p");
+        p.textContent = desc.textContent.trim();
+        textCell.push(p);
+      }
+      if (link) {
+        const p = document2.createElement("p");
+        const a = document2.createElement("a");
+        a.href = link.href;
+        a.textContent = link.textContent.trim();
+        p.appendChild(a);
+        textCell.push(p);
+      }
+      if (imageCell.length || textCell.length) {
+        cells.push([imageCell, textCell]);
+      }
+    });
+    return cells;
+  }
+  function parse3(element, { document: document2 }) {
+    const isLatestNews = !!element.querySelector(".c-latestnews, .latestnews-container");
+    const cells = isLatestNews ? parseLatestNews(element, document2) : parseCustomizableItems(element, document2) || parseBuildingBlocks(element, document2);
+    if (!cells || !cells.length) return;
     const block = WebImporter.Blocks.createBlock(document2, { name: "cards", cells });
     element.replaceWith(block);
   }
@@ -242,6 +384,13 @@ var CustomImportScript = (() => {
       );
       hiddenInputs.forEach((input) => input.remove());
       element.querySelectorAll(".carouselslidegroup p[id]").forEach((p) => p.remove());
+      element.querySelectorAll(".colctrl").forEach((col) => {
+        var _a;
+        const row = col.querySelector(":scope > .row");
+        if (row && row.textContent.trim() === "" && !row.querySelector("img, video, a")) {
+          (_a = col.closest(".cols, .cols2, .cols3, .cols4")) == null ? void 0 : _a.remove();
+        }
+      });
     }
     if (hookName === TransformHook.afterTransform) {
       WebImporter.DOMUtils.remove(element, [
@@ -354,7 +503,6 @@ var CustomImportScript = (() => {
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
-      WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
       const path = WebImporter.FileUtils.sanitizePath(
         new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html$/, "")
       );
