@@ -1,0 +1,64 @@
+main .section-nav-wrapper {
+  padding: 0;
+}
+
+main .section:has(.section-nav) {
+  padding: 0;
+  margin: 0;
+}
+
+main .section:has(.section-nav).sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+main .section-nav {
+  background-color: var(--color-white, #fff);
+  border-bottom: 1px solid var(--color-border, #ddd);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%);
+}
+
+main .section-nav nav {
+  display: flex;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+main .section-nav nav::-webkit-scrollbar {
+  display: none;
+}
+
+main .section-nav nav a {
+  display: block;
+  padding: 0.875rem 1.25rem;
+  font-size: var(--body-font-size-s, 0.875rem);
+  font-style: italic;
+  color: var(--text-color, #333);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+main .section-nav nav a:hover {
+  color: var(--link-hover-color, #000);
+  border-bottom-color: var(--color-gold, #ffb500);
+}
+
+main .section-nav nav a.active {
+  color: var(--link-hover-color, #000);
+  border-bottom-color: var(--color-gold, #ffb500);
+  font-weight: 700;
+}
+
+@media (width >= 900px) {
+  main .section-nav nav {
+    justify-content: center;
+  }
+}

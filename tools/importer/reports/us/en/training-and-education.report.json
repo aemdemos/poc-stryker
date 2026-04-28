@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/training-and-education.html",
+  "path": "us/en/training-and-education",
+  "timestamp": "2026-04-28T09:58:27.456Z",
+  "title": "Training and education | Stryker",
+  "template": "hub-page",
+  "blocks": [
+    "embed",
+    "cards",
+    "cards",
+    "cards",
+    "cards"
+  ]
+}

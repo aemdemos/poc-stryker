@@ -1,0 +1,327 @@
+{
+  "metadata": {
+    "projectType": "da"
+  },
+  "templates": [
+    {
+      "name": "training-article",
+      "urls": [
+        "https://www.stryker.com/us/en/training-and-education/medical-and-surgical-equipment--/sage/focusrn/pressure-injuries.html"
+      ],
+      "description": "Training and education article page for Sage FocusRN pressure injury content",
+      "blocks": [
+        {
+          "name": "columns",
+          "instances": [
+            ".cols2 > .colctrl",
+            ".cols2_1-3_2-3 > .colctrl"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Back Link and Logo",
+          "selector": ".experienceFragment > .xf-content-height > .aem-Grid > .text.parbase, .experienceFragment > .xf-content-height > .aem-Grid > .standaloneimage",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            ".experienceFragment .text.parbase .c-rich-text-editor .left-to-right",
+            ".experienceFragment .standaloneimage .c-standalone-image"
+          ]
+        },
+        {
+          "id": "section-2",
+          "name": "Hero",
+          "selector": ".cols2",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-3",
+          "name": "Educational Courses",
+          "selector": [
+            "#ebgoqkbe",
+            ".section-title:has(#ebgoqkbe)"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "#ebgoqkbe .component-subheading"
+          ]
+        },
+        {
+          "id": "section-4",
+          "name": "White Papers",
+          "selector": [
+            "#aaptuzcm",
+            ".section-title:has(#aaptuzcm)"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "#aaptuzcm .component-subheading"
+          ]
+        },
+        {
+          "id": "section-5",
+          "name": "Implementation Tools",
+          "selector": [
+            "#gjbrbovd",
+            ".section-title:has(#gjbrbovd)"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "#gjbrbovd .component-subheading"
+          ]
+        },
+        {
+          "id": "section-6",
+          "name": "Posters",
+          "selector": [
+            "#qakslgbx",
+            ".section-title:has(#qakslgbx)"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "#qakslgbx .component-subheading"
+          ]
+        },
+        {
+          "id": "section-7",
+          "name": "Case Studies",
+          "selector": [
+            "#igbwiggw",
+            ".section-title:has(#igbwiggw)"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "#igbwiggw .component-subheading"
+          ]
+        },
+        {
+          "id": "section-8",
+          "name": "Disclaimer",
+          "selector": ".c-disclaimer",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            ".c-disclaimer"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "product-page",
+      "urls": [
+        "https://www.stryker.com/us/en/portfolios/medical-surgical-equipment/integration-and-connectivity/or-integration/rise.html"
+      ],
+      "description": "Product detail page with hero video, feature sections, columns layouts, embedded videos, and related products grid",
+      "blocks": [
+        {
+          "name": "embed",
+          "instances": [
+            ".standalonevideo .c-standalone-video",
+            ".mixedmediagallery"
+          ]
+        },
+        {
+          "name": "columns",
+          "instances": [
+            ".cols2 > .colctrl",
+            ".cols2_1-3_2-3 > .colctrl",
+            ".cols3 > .colctrl",
+            ".cols4 > .colctrl"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            ".customizable .c-customizeable"
+          ]
+        },
+        {
+          "name": "form",
+          "instances": [
+            ".marketoform"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Hero Video",
+          "selector": ".experienceFragment-ef",
+          "style": null,
+          "blocks": ["embed"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2",
+          "name": "Product Introduction",
+          "selector": ".cols2_1-3_2-3",
+          "style": null,
+          "blocks": ["columns"],
+          "defaultContent": [".largeheadline", ".c-rich-text-editor"]
+        },
+        {
+          "id": "section-3",
+          "name": "Your OR Your Way",
+          "selector": ["#your-or-your-way", ".section-title:has(#your-or-your-way)"],
+          "style": null,
+          "blocks": ["embed", "columns"],
+          "defaultContent": [".largeheadline", ".c-rich-text-editor"]
+        },
+        {
+          "id": "section-4",
+          "name": "Connectivity",
+          "selector": ["#connectivity", ".section-title:has(#connectivity)"],
+          "style": null,
+          "blocks": ["embed", "columns"],
+          "defaultContent": [".c-rich-text-editor"]
+        },
+        {
+          "id": "section-5",
+          "name": "Visualization",
+          "selector": ["#visualization", ".section-title:has(#visualization)"],
+          "style": null,
+          "blocks": ["embed", "columns"],
+          "defaultContent": [".c-rich-text-editor"]
+        },
+        {
+          "id": "section-6",
+          "name": "Related Products",
+          "selector": ["#related-products", ".section-title:has(#related-products)"],
+          "style": null,
+          "blocks": ["cards"],
+          "defaultContent": [".largeheadline"]
+        },
+        {
+          "id": "section-7",
+          "name": "Contact Us",
+          "selector": ["#contact-us", ".section-title:has(#contact-us)"],
+          "style": null,
+          "blocks": [],
+          "defaultContent": [".c-disclaimer"]
+        }
+      ]
+    },
+    {
+      "name": "hub-page",
+      "urls": [
+        "https://www.stryker.com/us/en/training-and-education.html"
+      ],
+      "description": "Hub/directory page with hero, card grids organized by audience, CTA bands, and calendar section",
+      "blocks": [
+        {
+          "name": "embed",
+          "instances": [
+            ".standalonevideo .c-standalone-video"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            ".experienceFragment:has(.buildingblock)"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Hero and Intro",
+          "selector": ".carouselslidegroup",
+          "style": null,
+          "blocks": ["embed"],
+          "defaultContent": [".largeheadline", ".c-rich-text-editor"]
+        },
+        {
+          "id": "section-2",
+          "name": "Nurses and Physician Assistants",
+          "selector": ".section-title:nth-of-type(1)",
+          "style": null,
+          "blocks": ["cards"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-3",
+          "name": "Emergency Care",
+          "selector": ".section-title:nth-of-type(2)",
+          "style": null,
+          "blocks": ["cards"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-4",
+          "name": "Surgeons Residents Fellows",
+          "selector": ".section-title:nth-of-type(3)",
+          "style": null,
+          "blocks": ["cards"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-5",
+          "name": "General Public",
+          "selector": ".section-title:nth-of-type(4)",
+          "style": null,
+          "blocks": ["cards"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-6",
+          "name": "Training Calendar",
+          "selector": ".section-title:nth-of-type(5)",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [".largeheadline", ".c-rich-text-editor"]
+        }
+      ]
+    },
+    {
+      "name": "homepage",
+      "urls": [
+        "https://www.stryker.com/us/en/index.html"
+      ],
+      "description": "Stryker homepage with hero carousel, news cards, focus areas, people section, and quick links",
+      "blocks": [
+        {
+          "name": "embed",
+          "instances": [
+            ".standalonevideo .c-standalone-video"
+          ]
+        },
+        {
+          "name": "columns",
+          "instances": [
+            ".cols2 > .colctrl",
+            ".cols4 > .colctrl"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            ".experienceFragment:has(.buildingblock)",
+            ".customizable .c-customizeable"
+          ]
+        }
+      ],
+      "sections": []
+    }
+  ]
+}
