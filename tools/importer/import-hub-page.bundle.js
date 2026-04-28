@@ -209,6 +209,9 @@ var CustomImportScript = (() => {
       });
     }
     if (hookName === TransformHook.afterTransform) {
+      element.querySelectorAll('img[src*="?$"]').forEach((img) => {
+        img.src = img.src.replace(/\?\$[^$]*\$$/, "");
+      });
       WebImporter.DOMUtils.remove(element, [
         "header#header",
         "footer#footer",

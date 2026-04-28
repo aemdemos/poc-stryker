@@ -44,6 +44,11 @@ export default function transform(hookName, element, payload) {
   }
 
   if (hookName === TransformHook.afterTransform) {
+    // Strip Scene7 rendering params from image URLs ($max_width_1440$, $preset_307_184$, etc.)
+    // These $ params break DA's image processing. Images serve fine without them.
+    element.querySelectorAll('img[src*="?$"]').forEach((img) => {
+      img.src = img.src.replace(/\?\$[^$]*\$$/, '');
+    });
     // Site header (line 32: <header id="header" class="g-header">)
     // Site footer (line 1942: <footer id="footer" class="footer">)
     // Jump bar navigation (line 524: <div class="jumpbarnav">)
