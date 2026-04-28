@@ -12,6 +12,7 @@ import {
   readBlockConfig,
   toClassName,
   loadScript,
+  buildBlock,
 } from './aem.js';
 
 /** Max sections/children to process (CWE-770). */
@@ -138,6 +139,35 @@ function autolinkModals(doc) {
 }
 
 /**
+ * Builds a sticky section-nav block from H2 headings that start each section.
+ * Only shown when 2+ section headings exist.
+ * @param {Element} main The container element
+ */
+function buildSectionNav(main) {
+  const sections = [...main.querySelectorAll(':scope > div')];
+  const headings = [];
+  sections.forEach((section) => {
+    const h2 = section.querySelector(':scope > h2, :scope > div > h2');
+    if (h2 && h2.id) headings.push(h2);
+  });
+  if (headings.length < 2) return;
+
+  const links = headings.map((h2) => {
+    const a = document.createElement('a');
+    a.href = `#${h2.id}`;
+    a.textContent = h2.textContent.trim();
+    return a;
+  });
+  const navBlock = buildBlock('section-nav', { elems: links });
+  const navSection = document.createElement('div');
+  navSection.append(navBlock);
+
+  const firstHeading = headings[0];
+  const targetSection = firstHeading.closest('div');
+  main.insertBefore(navSection, targetSection);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -161,6 +191,7 @@ function buildAutoBlocks(main) {
       });
     }
 
+    buildSectionNav(main);
     // buildHeroBlock(main); uncomment if autoblocking the hero
   } catch (error) {
     // eslint-disable-next-line no-console

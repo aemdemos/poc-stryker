@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/index.html",
+  "path": "us/en",
+  "timestamp": "2026-04-28T12:07:48.143Z",
+  "title": "Stryker - Medical Devices and Equipment Manufacturing Company | Stryker",
+  "template": "homepage",
+  "blocks": [
+    "embed",
+    "columns",
+    "columns",
+    "columns",
+    "columns",
+    "columns",
+    "columns",
+    "columns",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards"
+  ]
+}
