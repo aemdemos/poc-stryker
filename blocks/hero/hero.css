@@ -1,77 +1,11 @@
 @import url('./hero-tokens.css');
 
-/* Hero styling applied to the first section (default content, no block wrapper needed) */
-main > .section:first-child {
-  border-bottom: 1px solid var(--hero-border-color);
-  padding: var(--hero-padding);
-}
-
-main > .section:first-child h1 {
-  color: var(--hero-title-color);
-  font-family: var(--hero-title-font);
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-main > .section:first-child h2 {
-  color: var(--text-color);
-  font-family: var(--hero-subtitle-font);
-  font-size: 1.25rem;
-  font-weight: 300;
-  margin: 0.5rem 0 0;
-}
-
-main > .section:first-child p {
-  font-family: var(--body-font-family);
-  font-size: var(--body-font-size-m);
-  margin: 0.75rem 0 0;
-  line-height: 1.6;
-}
-
-main > .section:first-child img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-@media (width >= 900px) {
-  main > .section:first-child {
-    padding: 3rem 2rem;
-  }
-
-  main > .section:first-child > .default-content-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-    min-height: 300px;
-  }
-
-  main > .section:first-child h1 {
-    font-size: 2.25rem;
-  }
-
-  main > .section:first-child h2 {
-    font-size: 1.5rem;
-  }
-
-  /* Image goes right, takes ~50% */
-  main > .section:first-child > .default-content-wrapper > p:has(picture),
-  main > .section:first-child > .default-content-wrapper > p:last-child:has(img) {
-    flex: 0 0 50%;
-    order: 2;
-    margin: 0;
-  }
-}
-
-/* Keep hero block styles for backward compatibility with already-imported pages */
 .hero-container .hero-wrapper {
   max-width: unset;
   padding: 0;
 }
 
 main .hero {
-  position: relative;
   padding: var(--hero-padding);
   display: flex;
   flex-direction: column;
