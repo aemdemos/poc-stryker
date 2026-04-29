@@ -88,6 +88,12 @@ export default function transform(hookName, element, payload) {
       }
       if (!sectionEl) continue;
 
+      // Skip empty sections — don't add breaks around them
+      if (!sectionEl.textContent.trim() && !sectionEl.querySelector('img, picture, table')) {
+        sectionEl.remove();
+        continue;
+      }
+
       if (section.style) {
         const metaBlock = WebImporter.Blocks.createBlock(document, {
           name: 'Section Metadata',

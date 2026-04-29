@@ -125,35 +125,12 @@ function parseCards(element, { document }) {
   }
 }
 
-// ── Product Filters (taxonomy + filters + product index with source attribution) ──
+// ── Product Filters (filter definitions + JCR tag paths) ──
 function parseProductFilters(element, { document }) {
   const cells = [];
 
-  const addRow = (key, value, source) => {
-    const keyCell = document.createElement('div');
-    keyCell.textContent = key;
-    const valCell = document.createElement('div');
-    valCell.textContent = source ? `${value} [source: ${source}]` : value;
-    cells.push([keyCell, valCell]);
-  };
-
-  const body = document.body || document.querySelector('body');
-  [
-    ['template', 'data-template'],
-    ['hierarchy', 'data-hierarchy'],
-    ['portfolio', 'data-portfolio'],
-    ['capability', 'data-capability'],
-    ['contentType', 'data-content-type'],
-    ['specialty', 'data-specialty'],
-  ].forEach(([label, attr]) => {
-    const value = body?.getAttribute(attr) || '';
-    if (value) addRow(`Page ${label}`, value, `<body ${attr}>`);
-  });
-
   const gridRoot = element.closest('.c-filtered-content-type-grid') || element.parentElement;
   const selects = gridRoot ? gridRoot.querySelectorAll('.filters-container select') : element.querySelectorAll('select');
-  const tagLabelMap = new Map();
-  const filterLabels = new Map();
 
   selects.forEach((select) => {
     const label = select.id
@@ -166,54 +143,19 @@ function parseProductFilters(element, { document }) {
     const displayOptions = options.map((o) => o.textContent.trim()).filter(Boolean);
     const tagPaths = options.map((o) => o.value).filter(Boolean);
 
-    options.forEach((o) => {
-      if (o.value && o.value !== 'all') {
-        tagLabelMap.set(o.value, o.textContent.trim());
-        filterLabels.set(o.value, label);
-      }
-    });
-
     if (displayOptions.length > 0) {
-      addRow(`Filter: ${label}`, displayOptions.join(', '), `.filters-container select#${select.id || '(unnamed)'}`);
-      addRow(`Filter tag paths: ${label}`, tagPaths.join(', '), `<option value="..."> (JCR tag paths)`);
+      const filterKey = document.createElement('div');
+      filterKey.textContent = 'Filter';
+      const filterVal = document.createElement('div');
+      filterVal.textContent = `${label}: ${displayOptions.join(', ')}`;
+      cells.push([filterKey, filterVal]);
+
+      const pathKey = document.createElement('div');
+      pathKey.textContent = 'Filter tag paths';
+      const pathVal = document.createElement('div');
+      pathVal.textContent = `${label}: ${tagPaths.join(', ')}`;
+      cells.push([pathKey, pathVal]);
     }
-  });
-
-  const productItems = gridRoot
-    ? gridRoot.querySelectorAll('.product-item')
-    : element.querySelectorAll('.product-item');
-
-  productItems.forEach((item) => {
-    const name = item.querySelector('h4')?.textContent?.trim() || '';
-    const pagePath = item.getAttribute('data-pagepath') || '';
-    const rawTags = item.getAttribute('data-tags') || '';
-
-    const resolvedTags = [];
-    if (rawTags && tagLabelMap.size > 0) {
-      const tagPaths = rawTags.split(',').map((t) => t.trim());
-      const grouped = new Map();
-      tagPaths.forEach((tp) => {
-        const lbl = tagLabelMap.get(tp);
-        const fName = filterLabels.get(tp);
-        if (lbl && fName) {
-          if (!grouped.has(fName)) grouped.set(fName, []);
-          grouped.get(fName).push(lbl);
-        }
-      });
-      grouped.forEach((values, fName) => {
-        resolvedTags.push(`${fName}: ${values.join(', ')}`);
-      });
-    }
-
-    const parts = [name];
-    if (pagePath) parts.push(pagePath);
-    if (resolvedTags.length) parts.push(resolvedTags.join(' | '));
-
-    const sources = ['.product-item h4'];
-    if (pagePath) sources.push('.product-item[data-pagepath]');
-    if (resolvedTags.length) sources.push('.product-item[data-tags] → resolved via filter <option> values');
-
-    addRow('Product', parts.join(' :: '), sources.join(', '));
   });
 
   if (cells.length > 0) {

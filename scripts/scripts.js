@@ -501,6 +501,41 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Restore external image URLs that AEM's pipeline converted to about:error
+  const brokenImgs = main.querySelectorAll('img[src="about:error"]');
+  if (brokenImgs.length) {
+    try {
+      const resp = await fetch(`${window.location.pathname}.plain.html`);
+      if (resp.ok) {
+        const html = await resp.text();
+        const parser = new DOMParser();
+        const plainDoc = parser.parseFromString(html, 'text/html');
+        const originalImgs = plainDoc.querySelectorAll('img[src^="https://"]');
+        const urlByAlt = new Map();
+        const emptyAltUrls = [];
+        originalImgs.forEach((img) => {
+          const alt = img.getAttribute('alt') || '';
+          const src = img.getAttribute('src');
+          if (src && alt) urlByAlt.set(alt, src);
+          else if (src && !alt) emptyAltUrls.push(src);
+        });
+        let emptyAltIdx = 0;
+        brokenImgs.forEach((img) => {
+          const alt = img.getAttribute('alt') || '';
+          if (alt) {
+            const originalSrc = urlByAlt.get(alt);
+            if (originalSrc) img.src = originalSrc;
+          } else if (emptyAltIdx < emptyAltUrls.length) {
+            img.src = emptyAltUrls[emptyAltIdx];
+            emptyAltIdx += 1;
+          }
+        });
+      }
+    } catch {
+      // external image restore failed silently
+    }
+  }
 }
 
 /**
