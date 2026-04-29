@@ -7,4 +7,8 @@
   --cards-card-body-margin: 16px;
   --cards-image-aspect-ratio: 4 / 3;
   --cards-image-object-fit: cover;
+  --cards-highlight-label-bg: rgb(76, 125, 122);
+  --cards-highlight-label-color: #fff;
+  --cards-highlight-label-font: "Futura LT W01", Arial, Helvetica, sans-serif;
+  --cards-highlight-border-color: rgb(178, 180, 174);
 }

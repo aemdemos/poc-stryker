@@ -27,3 +27,57 @@
   aspect-ratio: var(--cards-image-aspect-ratio);
   object-fit: var(--cards-image-object-fit);
 }
+
+/* Highlight variant — category CTA cards */
+main .cards.highlight > ul > li {
+  border: none;
+  text-align: center;
+}
+
+main .cards.highlight .cards-card-image {
+  border-bottom: 3px solid var(--cards-highlight-border-color);
+}
+
+main .cards.highlight .cards-card-body {
+  padding: 0.75rem 0.5rem;
+}
+
+main .cards.highlight h4 {
+  margin: 0;
+}
+
+main .cards.highlight h4 a {
+  font-family: var(--cards-highlight-label-font);
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--cards-highlight-label-color);
+  background-color: var(--cards-highlight-label-bg);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* Product variant — product grid cards */
+main .cards.product > ul > li {
+  text-align: center;
+}
+
+main .cards.product .cards-card-image {
+  border-bottom: 3px solid var(--cards-highlight-border-color);
+}
+
+main .cards.product h4 {
+  font-family: var(--cards-highlight-label-font);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+main .cards.product h4 a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+main .cards.product h4 a:hover {
+  text-decoration: underline;
+}
