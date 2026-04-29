@@ -66,11 +66,11 @@ main .hero img {
     font-size: 1.75rem;
   }
 
-  main .hero > div:last-child {
+  main .hero > div:first-child {
     flex: 1;
   }
 
-  main .hero > div:first-child {
+  main .hero > div:last-child {
     flex: 0 0 auto;
   }
 

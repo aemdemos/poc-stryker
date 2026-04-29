@@ -24,13 +24,14 @@ function parseHero(element, { document }) {
   }
 
   const cells = [];
-  if (heroImg) cells.push([heroImg]);
 
   const contentContainer = document.createElement('div');
   if (title) contentContainer.append(title);
   if (subtitle) contentContainer.append(subtitle);
   if (description) contentContainer.append(description);
   cells.push([contentContainer]);
+
+  if (heroImg) cells.push([heroImg]);
 
   const block = WebImporter.Blocks.createBlock(document, { name: 'hero', cells });
   element.replaceWith(block);
