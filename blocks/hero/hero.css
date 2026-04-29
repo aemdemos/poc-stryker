@@ -12,7 +12,7 @@ main .hero {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  border-bottom: 3px solid var(--hero-border-color);
+  border-bottom: 1px solid var(--hero-border-color);
 }
 
 main .hero h1 {
@@ -26,7 +26,7 @@ main .hero h1 {
 main .hero h2 {
   color: var(--text-color);
   font-family: var(--hero-subtitle-font);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 300;
   margin: 0.5rem 0 0;
 }
@@ -35,10 +35,12 @@ main .hero p {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
   margin: 0.75rem 0 0;
+  line-height: 1.6;
 }
 
 main .hero picture,
-main .hero > div:first-child {
+main .hero > div:has(picture),
+main .hero > div:has(img):not(:has(h1)) {
   position: static;
   z-index: auto;
 }
@@ -46,7 +48,6 @@ main .hero > div:first-child {
 main .hero img {
   width: 100%;
   height: auto;
-  max-width: 400px;
   object-fit: contain;
 }
 
@@ -54,8 +55,9 @@ main .hero img {
   main .hero {
     flex-direction: row;
     align-items: center;
-    padding: var(--hero-padding-desktop);
-    gap: 2rem;
+    padding: 3rem 2rem;
+    gap: 3rem;
+    min-height: 350px;
   }
 
   main .hero h1 {
@@ -63,18 +65,21 @@ main .hero img {
   }
 
   main .hero h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
-  main .hero > div:first-child {
+  main .hero > div:has(h1) {
     flex: 1;
+    order: 1;
   }
 
-  main .hero > div:last-child {
-    flex: 0 0 auto;
+  main .hero > div:has(picture),
+  main .hero > div:has(img):not(:has(h1)) {
+    flex: 0 0 50%;
+    order: 2;
   }
 
   main .hero img {
-    max-width: 300px;
+    max-width: 100%;
   }
 }
