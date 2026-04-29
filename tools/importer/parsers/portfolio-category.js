@@ -9,6 +9,8 @@
  */
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
+// Outputs as default content (not a block table) for maximum authorability.
+// Authors see a simple heading + subheading + paragraph + image in their document.
 function parseHero(element, { document }) {
   const title = element.querySelector('h1, .title');
   const subtitle = element.querySelector('h2, .subhead');
@@ -23,18 +25,17 @@ function parseHero(element, { document }) {
     }
   }
 
-  const cells = [];
+  const container = document.createElement('div');
+  if (title) container.append(title);
+  if (subtitle) container.append(subtitle);
+  if (description) container.append(description);
+  if (heroImg) {
+    const p = document.createElement('p');
+    p.append(heroImg);
+    container.append(p);
+  }
 
-  const contentContainer = document.createElement('div');
-  if (title) contentContainer.append(title);
-  if (subtitle) contentContainer.append(subtitle);
-  if (description) contentContainer.append(description);
-  cells.push([contentContainer]);
-
-  if (heroImg) cells.push([heroImg]);
-
-  const block = WebImporter.Blocks.createBlock(document, { name: 'hero', cells });
-  element.replaceWith(block);
+  element.replaceWith(container);
 }
 
 // ── Cards (highlight + product) ───────────────────────────────────────────────
