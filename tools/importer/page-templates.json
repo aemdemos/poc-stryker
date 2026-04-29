@@ -1,0 +1,79 @@
+{
+  "templates": [
+    {
+      "name": "teach-talks-video-page",
+      "urls": [
+        "https://www.stryker.com/us/en/training-and-education/orthopaedics/trauma-extremities/teach/TEACH-TALKS-home-page/Reverse-Shoulder-Replacements-2020.html"
+      ],
+      "description": "TEACH TALKS video page featuring educational surgical procedure videos with speaker information",
+      "blocks": [
+        {
+          "name": "columns",
+          "instances": [
+            "div.cols2_2-3_1-3"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            "div.cols4"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1-teach-banner",
+          "name": "TEACH Talks Banner",
+          "selector": "div.standaloneimage",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "div.standaloneimage .c-standalone-image-content"
+          ]
+        },
+        {
+          "id": "section-2-course-intro",
+          "name": "Course Introduction",
+          "selector": [
+            "div.text.parbase:has(.dimensional-box)",
+            "div.largeheadline:has(.fontsize-3-5-vw)",
+            "div.cols2_2-3_1-3"
+          ],
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            ".dimensional-box",
+            ".largeheadline .fontsize-3-5-vw"
+          ]
+        },
+        {
+          "id": "section-3-course-overview",
+          "name": "Course Overview - Chapters",
+          "selector": [
+            "div.text.parbase:has(.bg-golden-gradient)",
+            "div.cols4"
+          ],
+          "style": "golden",
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": [
+            ".bg-golden-gradient"
+          ]
+        },
+        {
+          "id": "section-4-disclaimer",
+          "name": "Footer Disclaimer",
+          "selector": ".c-disclaimer",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "#publishedDate"
+          ]
+        }
+      ]
+    }
+  ]
+}
