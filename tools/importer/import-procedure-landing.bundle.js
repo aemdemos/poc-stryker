@@ -411,17 +411,19 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/transformers/stryker-sections.js
-  var JUMPBAR_SECTION_IDS = [
-    "procedural-overview",
-    "videos",
-    "medical-education",
-    "implants",
-    "mako-smartrobotics",
-    "instrumentation",
-    "patient-positioning-equipment"
-  ];
+  function slugify(text) {
+    return text.toLowerCase().replace(/[™®©]/g, "").replace(/&nbsp;/g, " ").replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  }
   function sectionMetadataHtml(dataId) {
     return '<table><tr><th colspan="2">Section Metadata</th></tr><tr><td>data-id</td><td>' + dataId + "</td></tr></table>";
+  }
+  function extractHeadingFromChunk(chunk) {
+    const headingMatch = chunk.match(/<h[123][^>]*>([\s\S]*?)<\/h[123]>/i);
+    if (headingMatch) {
+      const text = headingMatch[1].replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").trim();
+      if (text) return text;
+    }
+    return null;
   }
   function transform2(hookName, element, payload) {
     if (hookName !== "beforeTransform") return;
@@ -441,17 +443,23 @@ var CustomImportScript = (() => {
     }
     const sectionTitleStr = 'class="section-title"';
     let searchFrom = 0;
-    let sectionIdx = 0;
-    while (searchFrom < html.length && sectionIdx < JUMPBAR_SECTION_IDS.length) {
+    const sectionTitlePositions = [];
+    while (searchFrom < html.length) {
       const pos = html.indexOf(sectionTitleStr, searchFrom);
       if (pos === -1) break;
       const tagOpen = html.lastIndexOf("<", pos);
       if (tagOpen !== -1) {
-        splits.push({ pos: tagOpen, dataId: JUMPBAR_SECTION_IDS[sectionIdx] });
+        sectionTitlePositions.push(tagOpen);
       }
-      sectionIdx += 1;
       searchFrom = pos + sectionTitleStr.length;
     }
+    sectionTitlePositions.forEach((pos, idx) => {
+      const nextPos = idx < sectionTitlePositions.length - 1 ? sectionTitlePositions[idx + 1] : Math.min(pos + 5e3, html.length);
+      const chunk = html.substring(pos, nextPos);
+      const headingText = extractHeadingFromChunk(chunk);
+      const dataId = headingText ? slugify(headingText) : "section-" + (idx + 1);
+      splits.push({ pos, dataId });
+    });
     const sepStr = 'class="sectionseparator"';
     const firstSep = html.indexOf(sepStr);
     if (firstSep !== -1) {

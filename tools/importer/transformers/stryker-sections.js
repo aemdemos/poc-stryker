@@ -2,31 +2,44 @@
 /* global WebImporter */
 
 /**
- * Stryker DART sections transformer.
+ * Stryker procedure-landing sections transformer.
  *
- * Uses .section-title class (stable) rather than random jumpbar IDs
- * (which change on each page load). Maps sections by their ordinal
- * position in the DOM.
+ * Dynamically derives section IDs from the heading text that follows each
+ * .section-title boundary (slugified). Works with any number of jumpbar
+ * sections regardless of page content.
  *
- * Section boundaries are identified by their class patterns in the
- * serialized innerHTML, then the HTML is split and reconstructured
- * into flat body-level sections with <hr> separators.
+ * Section boundaries are identified by class patterns in serialized innerHTML,
+ * then HTML is split and restructured into flat body-level sections with <hr>.
  */
 
-// Ordered list of jumpbar section data-ids (matches the 7 .section-title elements in DOM order)
-const JUMPBAR_SECTION_IDS = [
-  'procedural-overview',
-  'videos',
-  'medical-education',
-  'implants',
-  'mako-smartrobotics',
-  'instrumentation',
-  'patient-positioning-equipment',
-];
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[™®©]/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
 
 function sectionMetadataHtml(dataId) {
   return '<table><tr><th colspan="2">Section Metadata</th></tr>'
     + '<tr><td>data-id</td><td>' + dataId + '</td></tr></table>';
+}
+
+/**
+ * Extract the section heading text from a chunk of HTML following a .section-title.
+ * Looks for the first heading (h1-h3) inside .largeheadline or .c-largeheadline.
+ */
+function extractHeadingFromChunk(chunk) {
+  // Try h2 first (most common), then h1, then h3
+  const headingMatch = chunk.match(/<h[123][^>]*>([\s\S]*?)<\/h[123]>/i);
+  if (headingMatch) {
+    const text = headingMatch[1].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+    if (text) return text;
+  }
+  return null;
 }
 
 export default function transform(hookName, element, payload) {
@@ -54,23 +67,36 @@ export default function transform(hookName, element, payload) {
   }
 
   // Jumpbar sections: find ALL occurrences of class="section-title"
-  // and map them by ordinal position to the JUMPBAR_SECTION_IDS array
+  // Derive data-id from the heading text that follows each boundary
   const sectionTitleStr = 'class="section-title"';
   let searchFrom = 0;
-  let sectionIdx = 0;
+  const sectionTitlePositions = [];
 
-  while (searchFrom < html.length && sectionIdx < JUMPBAR_SECTION_IDS.length) {
+  while (searchFrom < html.length) {
     const pos = html.indexOf(sectionTitleStr, searchFrom);
     if (pos === -1) break;
 
     const tagOpen = html.lastIndexOf('<', pos);
     if (tagOpen !== -1) {
-      splits.push({ pos: tagOpen, dataId: JUMPBAR_SECTION_IDS[sectionIdx] });
+      sectionTitlePositions.push(tagOpen);
     }
 
-    sectionIdx += 1;
     searchFrom = pos + sectionTitleStr.length;
   }
+
+  // For each section-title position, look ahead to find the heading text
+  sectionTitlePositions.forEach((pos, idx) => {
+    // Get the chunk between this position and the next section-title (or end)
+    const nextPos = idx < sectionTitlePositions.length - 1
+      ? sectionTitlePositions[idx + 1]
+      : Math.min(pos + 5000, html.length);
+    const chunk = html.substring(pos, nextPos);
+
+    const headingText = extractHeadingFromChunk(chunk);
+    const dataId = headingText ? slugify(headingText) : ('section-' + (idx + 1));
+
+    splits.push({ pos, dataId });
+  });
 
   // ASC promotion: second .sectionseparator
   const sepStr = 'class="sectionseparator"';

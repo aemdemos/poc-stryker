@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/joint-replacement/procedures/direct-superior-approach.html",
+  "path": "us/en/joint-replacement/procedures/direct-superior-approach",
+  "timestamp": "2026-04-30T18:16:17.427Z",
+  "title": "Direct Superior Approach | Stryker",
+  "template": "procedure-landing",
+  "blocks": [
+    "hero",
+    "hero",
+    "section-nav",
+    "columns",
+    "columns",
+    "columns",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards",
+    "cards"
+  ]
+}
