@@ -502,7 +502,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
-  // Restore external image URLs that AEM's pipeline converted to about:error
+  // Restore image URLs that AEM's pipeline converted to about:error
   const brokenImgs = main.querySelectorAll('img[src="about:error"]');
   if (brokenImgs.length) {
     try {
@@ -511,14 +511,15 @@ async function loadLazy(doc) {
         const html = await resp.text();
         const parser = new DOMParser();
         const plainDoc = parser.parseFromString(html, 'text/html');
-        const originalImgs = plainDoc.querySelectorAll('img[src^="https://"]');
+        const originalImgs = plainDoc.querySelectorAll('img[src]');
         const urlByAlt = new Map();
         const emptyAltUrls = [];
         originalImgs.forEach((img) => {
           const alt = img.getAttribute('alt') || '';
           const src = img.getAttribute('src');
-          if (src && alt) urlByAlt.set(alt, src);
-          else if (src && !alt) emptyAltUrls.push(src);
+          if (!src || src === 'about:error') return;
+          if (alt) urlByAlt.set(alt, src);
+          else emptyAltUrls.push(src);
         });
         let emptyAltIdx = 0;
         brokenImgs.forEach((img) => {
@@ -533,7 +534,7 @@ async function loadLazy(doc) {
         });
       }
     } catch {
-      // external image restore failed silently
+      // image restore failed silently
     }
   }
 }
