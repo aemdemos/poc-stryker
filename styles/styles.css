@@ -37,6 +37,16 @@
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
+  /* hero */
+  --hero-padding: 2rem 1rem;
+  --hero-padding-desktop: 3rem 2rem;
+  --hero-min-height: auto;
+  --hero-heading-max-width: 1200px;
+  --hero-title-color: rgb(255, 181, 0);
+  --hero-title-font: "Futura LT W01", Arial, Helvetica, sans-serif;
+  --hero-subtitle-font: "URWEgyptienneW01-Light", Rockwell, Georgia, Times, serif;
+  --hero-border-color: rgb(178, 180, 174);
+
   /* layout */
   --max-width-site: 1200px;
 
