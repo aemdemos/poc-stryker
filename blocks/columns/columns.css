@@ -3,6 +3,7 @@
 .columns > div {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
 .columns img {
@@ -21,9 +22,27 @@
   display: block;
 }
 
+.columns p {
+  font-size: var(--body-font-size-s);
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.columns a {
+  color: var(--cards-cta-color, #4c7d7a);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+}
+
+.columns a:hover {
+  text-decoration: underline;
+}
+
 @media (width >= 900px) {
   .columns > div {
-    align-items: center;
+    align-items: flex-start;
     flex-direction: unset;
     gap: var(--columns-gap);
   }
@@ -31,5 +50,9 @@
   .columns > div > div {
     flex: 1;
     order: unset;
+  }
+
+  .columns.columns-2-cols > div > .columns-img-col {
+    flex: 0 0 33%;
   }
 }
