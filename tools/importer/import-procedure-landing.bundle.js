@@ -65,6 +65,17 @@ var CustomImportScript = (() => {
         const h = document.createElement("h1");
         h.textContent = heading.textContent.trim().replace(/\s+/g, " ");
         wrapper.appendChild(h);
+      } else {
+        const line1 = element.querySelector(".overlayparsys .largeheadline span.line1") || element.querySelector(".largeheadline span.line1");
+        if (line1 && line1.textContent.trim()) {
+          const styledSpans = line1.querySelectorAll(":scope > span > span");
+          const hasMultipleStyles = styledSpans.length > 1;
+          if (!hasMultipleStyles) {
+            const h = document.createElement("h1");
+            h.textContent = line1.textContent.trim().replace(/\s+/g, " ");
+            wrapper.appendChild(h);
+          }
+        }
       }
       const subtitle = element.querySelector(".overlayparsys .largeheadline span.line2") || element.querySelector(".largeheadline span.line2") || element.querySelector("span.line2");
       if (subtitle && subtitle.textContent.trim()) {

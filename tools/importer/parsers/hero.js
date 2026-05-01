@@ -53,6 +53,21 @@ export default function parse(element, { document }) {
       const h = document.createElement('h1');
       h.textContent = heading.textContent.trim().replace(/\s+/g, ' ');
       wrapper.appendChild(h);
+    } else {
+      // Fallback: some pages use span.line1 instead of h1 for the primary heading
+      const line1 = element.querySelector('.overlayparsys .largeheadline span.line1')
+        || element.querySelector('.largeheadline span.line1');
+      if (line1 && line1.textContent.trim()) {
+        // Check if line1 has multiple differently-styled inner spans (e.g. ASC hero)
+        // If so, skip here and let the multi-span fallback below handle it
+        const styledSpans = line1.querySelectorAll(':scope > span > span');
+        const hasMultipleStyles = styledSpans.length > 1;
+        if (!hasMultipleStyles) {
+          const h = document.createElement('h1');
+          h.textContent = line1.textContent.trim().replace(/\s+/g, ' ');
+          wrapper.appendChild(h);
+        }
+      }
     }
 
     const subtitle = element.querySelector('.overlayparsys .largeheadline span.line2')
