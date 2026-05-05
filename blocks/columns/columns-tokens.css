@@ -1,4 +1,4 @@
-/* columns design tokens */
+/* columns design tokens - Stryker DART */
 :root {
-  --columns-gap: 24px;
+  --columns-gap: 2rem;
 }
