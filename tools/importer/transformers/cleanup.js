@@ -71,11 +71,25 @@ export default function transform(hookName, element, payload) {
       if (!el.closest('table')) el.remove();
     });
 
-    // Strip Scene7 query params from images so adjustImageUrls can fetch them
+    // Replace Scene7 social icon images with :iconname: text for EDS icons
+    const iconMap = {
+      LinkedIn_100x100: 'linkedin',
+      facebook_logo_100x100: 'facebook',
+    };
     element.querySelectorAll('img').forEach((img) => {
       const src = img.src || img.getAttribute('src') || '';
       if (src.includes('media-assets.stryker.com/is/image/stryker/')) {
-        img.src = src.split('?')[0];
+        const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+        if (match && iconMap[match[1]]) {
+          const link = img.closest('a');
+          if (link) {
+            link.textContent = `:${iconMap[match[1]]}:`;
+          } else {
+            img.replaceWith(document.createTextNode(`:${iconMap[match[1]]}:`));
+          }
+        } else {
+          img.src = src.split('?')[0];
+        }
       }
     });
 

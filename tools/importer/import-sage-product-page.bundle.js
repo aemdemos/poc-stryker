@@ -177,7 +177,7 @@ var CustomImportScript = (() => {
   function parse6(element, { document }) {
     const form = element.querySelector('form[id^="mktoForm_"]');
     if (!form) return;
-    const wrapper = document.createElement("div");
+    const cells = [["Contact Form"]];
     const fieldWraps = form.querySelectorAll(".mktoFieldWrap");
     fieldWraps.forEach((fieldWrap) => {
       const labelEl = fieldWrap.querySelector("label");
@@ -187,29 +187,31 @@ var CustomImportScript = (() => {
       const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
       const checkbox = fieldWrap.querySelector(".mktoCheckboxList");
       const isRequired = fieldWrap.classList.contains("mktoRequiredField");
+      const fieldLabel = isRequired ? `${labelText} *` : labelText;
       if (input) {
-        const p = document.createElement("p");
-        const text = isRequired ? `${labelText} *` : labelText;
-        p.textContent = text;
-        wrapper.appendChild(p);
+        let fieldType = "text";
+        if (input.tagName === "SELECT") fieldType = "select";
+        else if (input.tagName === "TEXTAREA") fieldType = "textarea";
+        else if (input.type === "email") fieldType = "email";
+        let typeValue = fieldType;
+        if (input.tagName === "SELECT") {
+          const options = [...input.querySelectorAll("option")].filter((opt) => opt.value && !opt.disabled).map((opt) => opt.textContent.trim());
+          if (options.length > 0) typeValue = `${fieldType}|${options.join(",")}`;
+        }
+        cells.push([fieldLabel, typeValue]);
       } else if (checkbox) {
         const checkLabel = checkbox.querySelector("label");
         if (checkLabel) {
-          const p = document.createElement("p");
-          p.textContent = `${checkLabel.textContent.trim()}`;
-          wrapper.appendChild(p);
+          cells.push([`${checkLabel.textContent.trim()} *`, "checkbox"]);
         }
       }
     });
     const submitBtn = form.querySelector('button[type="submit"], .mktoButton');
     if (submitBtn) {
-      const p = document.createElement("p");
-      const strong = document.createElement("strong");
-      strong.textContent = submitBtn.textContent.trim();
-      p.appendChild(strong);
-      wrapper.appendChild(p);
+      cells.push([submitBtn.textContent.trim(), "submit"]);
     }
-    element.replaceWith(wrapper);
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
   }
 
   // tools/importer/parsers/tabs-resources.js
@@ -217,7 +219,6 @@ var CustomImportScript = (() => {
     const tabLinks = element.querySelectorAll(".tab-link");
     const tabContents = element.querySelectorAll(".tab-content");
     if (tabLinks.length === 0) return;
-    const videoBlocks = [];
     const cells = [["Tabs"]];
     tabLinks.forEach((link, index) => {
       const label = link.textContent.trim();
@@ -249,34 +250,26 @@ var CustomImportScript = (() => {
           const videoTitle = video.querySelector("h3, .desc-content h3");
           const videoAsset = video.querySelector("[data-asset-path]");
           if (videoAsset) {
-            const assetName = videoAsset.getAttribute("data-asset-name") || "";
             const assetPath = videoAsset.getAttribute("data-asset-path") || "";
+            const viewerPath = videoAsset.getAttribute("data-viewer-path") || "https://media-assets.stryker.com/s7viewers/";
+            const imageServer = videoAsset.getAttribute("data-imageserver") || "https://media-assets.stryker.com/is/image/";
             const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+            if (videoTitle) {
+              const h = document.createElement("h3");
+              h.textContent = videoTitle.textContent.trim();
+              contentCell.appendChild(h);
+            }
             if (assetPath) {
-              let videoUrl = `${videoServer}${assetPath}`;
-              if (assetName && assetName.endsWith(".mp4")) {
-                videoUrl = `${videoUrl}/${assetName}`;
-              } else if (!videoUrl.includes(".mp4")) {
-                videoUrl = `${videoUrl}.mp4`;
-              }
-              const titleEl = videoTitle ? videoTitle.cloneNode(true) : null;
-              const videoLinkP = document.createElement("p");
-              const videoLink = document.createElement("a");
-              videoLink.href = videoUrl;
-              videoLink.textContent = videoUrl;
-              videoLinkP.appendChild(videoLink);
-              const videoCells = [
-                ["Video"],
-                [videoLinkP]
-              ];
-              const videoTable = WebImporter.DOMUtils.createTable(videoCells, document);
-              videoBlocks.push({ title: titleEl, table: videoTable });
+              const videoUrl = `${viewerPath}html5/VideoViewer.html?asset=${assetPath}&serverurl=${imageServer}&videoserverurl=${videoServer}`;
+              const p = document.createElement("p");
+              const a = document.createElement("a");
+              a.href = videoUrl;
+              a.textContent = videoUrl;
+              p.appendChild(a);
+              contentCell.appendChild(p);
             }
           }
         });
-        if (videos.length > 0 && contentCell.children.length === 0) {
-          return;
-        }
       }
       if (contentCell.children.length > 0) {
         cells.push([label, contentCell]);
@@ -287,13 +280,7 @@ var CustomImportScript = (() => {
       return;
     }
     const table = WebImporter.DOMUtils.createTable(cells, document);
-    const container = document.createElement("div");
-    container.appendChild(table);
-    videoBlocks.forEach(({ title, table: videoTable }) => {
-      if (title) container.appendChild(title);
-      container.appendChild(videoTable);
-    });
-    element.replaceWith(container);
+    element.replaceWith(table);
   }
 
   // tools/importer/parsers/columns-resources.js
@@ -379,10 +366,24 @@ var CustomImportScript = (() => {
       element.querySelectorAll('[aria-hidden="true"]').forEach((el) => {
         if (!el.closest("table")) el.remove();
       });
+      const iconMap = {
+        LinkedIn_100x100: "linkedin",
+        facebook_logo_100x100: "facebook"
+      };
       element.querySelectorAll("img").forEach((img) => {
         const src = img.src || img.getAttribute("src") || "";
         if (src.includes("media-assets.stryker.com/is/image/stryker/")) {
-          img.src = src.split("?")[0];
+          const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+          if (match && iconMap[match[1]]) {
+            const link = img.closest("a");
+            if (link) {
+              link.textContent = `:${iconMap[match[1]]}:`;
+            } else {
+              img.replaceWith(document.createTextNode(`:${iconMap[match[1]]}:`));
+            }
+          } else {
+            img.src = src.split("?")[0];
+          }
         }
       });
       element.querySelectorAll("div:empty").forEach((el) => {

@@ -32,17 +32,16 @@ export default function parse(element, { document }) {
       else if (input.tagName === 'TEXTAREA') fieldType = 'textarea';
       else if (input.type === 'email') fieldType = 'email';
 
-      const row = [fieldLabel, fieldType];
-
-      // Extract select options
+      // For select fields, encode options with pipe delimiter in the type cell
+      let typeValue = fieldType;
       if (input.tagName === 'SELECT') {
         const options = [...input.querySelectorAll('option')]
           .filter((opt) => opt.value && !opt.disabled)
           .map((opt) => opt.textContent.trim());
-        if (options.length > 0) row.push(options.join(','));
+        if (options.length > 0) typeValue = `${fieldType}|${options.join(',')}`;
       }
 
-      cells.push(row);
+      cells.push([fieldLabel, typeValue]);
     } else if (checkbox) {
       const checkLabel = checkbox.querySelector('label');
       if (checkLabel) {
