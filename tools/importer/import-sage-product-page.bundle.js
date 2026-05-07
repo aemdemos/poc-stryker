@@ -58,6 +58,19 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/hero.js
+  function resolveImageUrl(img, document) {
+    const src = img ? img.src : "";
+    if (!src) return src;
+    if (src.includes("/content/dam/")) return src;
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage && ogImage.content) {
+      return ogImage.content;
+    }
+    if (src.includes("media-assets.stryker.com/is/image/")) {
+      return src.split("?")[0];
+    }
+    return src;
+  }
   function parse2(element, { document }) {
     const img = element.querySelector(".c-standalone-image img");
     const overlay = element.querySelector(".overlayparsys");
@@ -72,7 +85,10 @@ var CustomImportScript = (() => {
     if (cta) contentCell.appendChild(cta.cloneNode(true));
     const cells = [["Hero"]];
     if (img) {
-      cells.push([img.cloneNode(true), contentCell]);
+      const imgClone = document.createElement("img");
+      imgClone.src = resolveImageUrl(img, document);
+      imgClone.alt = img.alt || "";
+      cells.push([imgClone, contentCell]);
     } else {
       cells.push([contentCell]);
     }
@@ -158,57 +174,33 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/form.js
-  function parse6(element, { document }) {
-    const form = element.querySelector('form[id^="mktoForm_"]');
-    const formId = form ? form.id.replace("mktoForm_", "") : "";
+  function parse6(element, { document, url, params }) {
+    const originalURL = params && params.originalURL || url || "https://www.stryker.com/us/en/sage/products/sage-air-pump.html";
+    const pageUrl = new URL(originalURL);
+    const pagePath = pageUrl.pathname.replace(/\.html$/, "").replace(/\/$/, "");
+    const formJsonPath = `${pagePath}-form.json`;
     const formContainer = element.querySelector("[data-marketo-form-id]");
-    const munchkinId = formContainer ? formContainer.getAttribute("data-marketo-munchkin-id") : "";
-    const cells = [["Form"]];
-    const idCell = document.createElement("div");
-    const idP = document.createElement("p");
-    idP.textContent = `Form ID: ${formId}`;
-    idCell.appendChild(idP);
-    if (munchkinId) {
-      const mP = document.createElement("p");
-      mP.textContent = `Munchkin ID: ${munchkinId}`;
-      idCell.appendChild(mP);
-    }
-    cells.push(["Configuration", idCell]);
-    if (form) {
-      const fieldWraps = form.querySelectorAll(".mktoFieldWrap");
-      fieldWraps.forEach((fieldWrap) => {
-        const label = fieldWrap.querySelector("label");
-        if (!label) return;
-        const labelText = label.textContent.replace(/^\*/, "").trim();
-        if (!labelText) return;
-        const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
-        const checkbox = fieldWrap.querySelector(".mktoCheckboxList");
-        const isRequired = fieldWrap.classList.contains("mktoRequiredField");
-        let fieldType = "text";
-        if (input) {
-          if (input.tagName === "SELECT") fieldType = "select";
-          else if (input.tagName === "TEXTAREA") fieldType = "textarea";
-          else if (input.type === "email") fieldType = "email";
-          else fieldType = input.type || "text";
-        } else if (checkbox) {
-          fieldType = "checkbox";
-          const checkLabel = checkbox.querySelector("label");
-          if (checkLabel) {
-            const checkText = checkLabel.textContent.trim();
-            const fieldInfo = `${labelText}: ${checkText}`;
-            const req2 = isRequired ? " *" : "";
-            cells.push([`${fieldInfo}${req2}`, fieldType]);
-            return;
-          }
-        }
-        const req = isRequired ? " *" : "";
-        cells.push([`${labelText}${req}`, fieldType]);
-      });
-    }
-    const submitBtn = form ? form.querySelector('button[type="submit"], .mktoButton') : null;
-    if (submitBtn) {
-      cells.push(["Submit", submitBtn.textContent.trim()]);
-    }
+    const baseUrl = formContainer ? formContainer.getAttribute("data-marketo-base-url") : "//lp.stryker.com";
+    const munchkinId = formContainer ? formContainer.getAttribute("data-marketo-munchkin-id") : "338-WAP-571";
+    const formId = formContainer ? formContainer.getAttribute("data-marketo-form-id") : "2327";
+    const submitUrl = `https:${baseUrl}/form/${munchkinId}/${formId}`;
+    const formLink = document.createElement("a");
+    formLink.href = formJsonPath;
+    formLink.textContent = formJsonPath;
+    const submitLink = document.createElement("a");
+    submitLink.href = submitUrl;
+    submitLink.textContent = submitUrl;
+    const contentCell = document.createElement("div");
+    const p1 = document.createElement("p");
+    p1.appendChild(formLink);
+    contentCell.appendChild(p1);
+    const p2 = document.createElement("p");
+    p2.appendChild(submitLink);
+    contentCell.appendChild(p2);
+    const cells = [
+      ["Form"],
+      [contentCell]
+    ];
     const table = WebImporter.DOMUtils.createTable(cells, document);
     element.replaceWith(table);
   }
@@ -249,21 +241,27 @@ var CustomImportScript = (() => {
           const videoTitle = video.querySelector("h3, .desc-content h3");
           const videoAsset = video.querySelector("[data-asset-path]");
           if (videoAsset) {
-            const assetPath = videoAsset.getAttribute("data-asset-path");
             const assetName = videoAsset.getAttribute("data-asset-name") || "";
-            const videoServer = videoAsset.getAttribute("data-videoserver") || "";
+            const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+            const assetPath = videoAsset.getAttribute("data-asset-path") || "";
             if (videoTitle) {
               const h = document.createElement("h3");
               h.textContent = videoTitle.textContent.trim();
               contentCell.appendChild(h);
             }
             if (assetPath) {
-              const p = document.createElement("p");
-              const a = document.createElement("a");
-              a.href = `${videoServer}${assetPath}`;
-              a.textContent = assetName || assetPath;
-              p.appendChild(a);
-              contentCell.appendChild(p);
+              const videoUrl = `${videoServer}${assetPath}`;
+              const videoLinkP = document.createElement("p");
+              const videoLink = document.createElement("a");
+              videoLink.href = videoUrl;
+              videoLink.textContent = videoUrl;
+              videoLinkP.appendChild(videoLink);
+              const videoCells = [
+                ["Video"],
+                [videoLinkP]
+              ];
+              const videoTable = WebImporter.DOMUtils.createTable(videoCells, document);
+              contentCell.appendChild(videoTable);
             }
           }
         });
@@ -360,6 +358,16 @@ var CustomImportScript = (() => {
     if (hookName === "afterTransform") {
       element.querySelectorAll('[aria-hidden="true"]').forEach((el) => {
         if (!el.closest("table")) el.remove();
+      });
+      element.querySelectorAll("img").forEach((img) => {
+        const src = img.src || img.getAttribute("src") || "";
+        if (src.includes("media-assets.stryker.com/is/image/stryker/")) {
+          const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+          if (match) {
+            const assetName = match[1];
+            img.src = `https://www.stryker.com/content/dam/stryker/sage/images/${assetName}.png`;
+          }
+        }
       });
       element.querySelectorAll("div:empty").forEach((el) => {
         if (!el.closest("table")) el.remove();

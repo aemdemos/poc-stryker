@@ -3,75 +3,45 @@
 
 /**
  * Parses the Marketo form into an EDS Form block.
- * Extracts the form ID, field labels, types, and required status.
+ * Creates a Form block with a link to the form JSON definition and a submit endpoint.
  * @param {Element} element - The .marketoform element
  * @param {Object} context - { document, url, params }
  */
-export default function parse(element, { document }) {
-  const form = element.querySelector('form[id^="mktoForm_"]');
-  const formId = form ? form.id.replace('mktoForm_', '') : '';
+export default function parse(element, { document, url, params }) {
+  // Determine the form JSON path based on the page path
+  const originalURL = (params && params.originalURL) || url || 'https://www.stryker.com/us/en/sage/products/sage-air-pump.html';
+  const pageUrl = new URL(originalURL);
+  const pagePath = pageUrl.pathname.replace(/\.html$/, '').replace(/\/$/, '');
+  const formJsonPath = `${pagePath}-form.json`;
 
+  // Extract submit URL from the Marketo form
   const formContainer = element.querySelector('[data-marketo-form-id]');
-  const munchkinId = formContainer ? formContainer.getAttribute('data-marketo-munchkin-id') : '';
+  const baseUrl = formContainer ? formContainer.getAttribute('data-marketo-base-url') : '//lp.stryker.com';
+  const munchkinId = formContainer ? formContainer.getAttribute('data-marketo-munchkin-id') : '338-WAP-571';
+  const formId = formContainer ? formContainer.getAttribute('data-marketo-form-id') : '2327';
+  const submitUrl = `https:${baseUrl}/form/${munchkinId}/${formId}`;
 
-  // Build header row with form identifier
-  const cells = [['Form']];
+  // Create links for the form block
+  const formLink = document.createElement('a');
+  formLink.href = formJsonPath;
+  formLink.textContent = formJsonPath;
 
-  // Add form ID row
-  const idCell = document.createElement('div');
-  const idP = document.createElement('p');
-  idP.textContent = `Form ID: ${formId}`;
-  idCell.appendChild(idP);
-  if (munchkinId) {
-    const mP = document.createElement('p');
-    mP.textContent = `Munchkin ID: ${munchkinId}`;
-    idCell.appendChild(mP);
-  }
-  cells.push(['Configuration', idCell]);
+  const submitLink = document.createElement('a');
+  submitLink.href = submitUrl;
+  submitLink.textContent = submitUrl;
 
-  // Extract fields with labels and types
-  if (form) {
-    const fieldWraps = form.querySelectorAll('.mktoFieldWrap');
-    fieldWraps.forEach((fieldWrap) => {
-      const label = fieldWrap.querySelector('label');
-      if (!label) return;
+  const contentCell = document.createElement('div');
+  const p1 = document.createElement('p');
+  p1.appendChild(formLink);
+  contentCell.appendChild(p1);
+  const p2 = document.createElement('p');
+  p2.appendChild(submitLink);
+  contentCell.appendChild(p2);
 
-      const labelText = label.textContent.replace(/^\*/, '').trim();
-      if (!labelText) return;
-
-      const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
-      const checkbox = fieldWrap.querySelector('.mktoCheckboxList');
-      const isRequired = fieldWrap.classList.contains('mktoRequiredField');
-
-      let fieldType = 'text';
-      if (input) {
-        if (input.tagName === 'SELECT') fieldType = 'select';
-        else if (input.tagName === 'TEXTAREA') fieldType = 'textarea';
-        else if (input.type === 'email') fieldType = 'email';
-        else fieldType = input.type || 'text';
-      } else if (checkbox) {
-        fieldType = 'checkbox';
-        // Get checkbox label text
-        const checkLabel = checkbox.querySelector('label');
-        if (checkLabel) {
-          const checkText = checkLabel.textContent.trim();
-          const fieldInfo = `${labelText}: ${checkText}`;
-          const req = isRequired ? ' *' : '';
-          cells.push([`${fieldInfo}${req}`, fieldType]);
-          return;
-        }
-      }
-
-      const req = isRequired ? ' *' : '';
-      cells.push([`${labelText}${req}`, fieldType]);
-    });
-  }
-
-  // Add submit button row
-  const submitBtn = form ? form.querySelector('button[type="submit"], .mktoButton') : null;
-  if (submitBtn) {
-    cells.push(['Submit', submitBtn.textContent.trim()]);
-  }
+  const cells = [
+    ['Form'],
+    [contentCell],
+  ];
 
   const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);

@@ -45,16 +45,16 @@ export default function parse(element, { document }) {
         }
       });
 
-      // Handle videos (Videos tab)
+      // Handle videos (Videos tab) - create a Video block
       const videos = content.querySelectorAll('.standalonevideo');
       videos.forEach((video) => {
         const videoTitle = video.querySelector('h3, .desc-content h3');
         const videoAsset = video.querySelector('[data-asset-path]');
 
         if (videoAsset) {
-          const assetPath = videoAsset.getAttribute('data-asset-path');
           const assetName = videoAsset.getAttribute('data-asset-name') || '';
-          const videoServer = videoAsset.getAttribute('data-videoserver') || '';
+          const videoServer = videoAsset.getAttribute('data-videoserver') || 'https://media-assets.stryker.com/is/content/';
+          const assetPath = videoAsset.getAttribute('data-asset-path') || '';
 
           if (videoTitle) {
             const h = document.createElement('h3');
@@ -62,13 +62,21 @@ export default function parse(element, { document }) {
             contentCell.appendChild(h);
           }
 
+          // Create a Video block with a proper <a> link
           if (assetPath) {
-            const p = document.createElement('p');
-            const a = document.createElement('a');
-            a.href = `${videoServer}${assetPath}`;
-            a.textContent = assetName || assetPath;
-            p.appendChild(a);
-            contentCell.appendChild(p);
+            const videoUrl = `${videoServer}${assetPath}`;
+            const videoLinkP = document.createElement('p');
+            const videoLink = document.createElement('a');
+            videoLink.href = videoUrl;
+            videoLink.textContent = videoUrl;
+            videoLinkP.appendChild(videoLink);
+
+            const videoCells = [
+              ['Video'],
+              [videoLinkP],
+            ];
+            const videoTable = WebImporter.DOMUtils.createTable(videoCells, document);
+            contentCell.appendChild(videoTable);
           }
         }
       });

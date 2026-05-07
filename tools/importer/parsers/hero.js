@@ -2,6 +2,31 @@
 /* global WebImporter */
 
 /**
+ * Converts Scene7 image URLs to DAM paths using og:image or other available sources.
+ * Falls back to the Scene7 URL with query params stripped if no DAM path found.
+ */
+function resolveImageUrl(img, document) {
+  const src = img ? img.src : '';
+  if (!src) return src;
+
+  // If already a DAM path, use it
+  if (src.includes('/content/dam/')) return src;
+
+  // Try to find the DAM equivalent from og:image meta
+  const ogImage = document.querySelector('meta[property="og:image"]');
+  if (ogImage && ogImage.content) {
+    return ogImage.content;
+  }
+
+  // Strip Scene7 query params as fallback
+  if (src.includes('media-assets.stryker.com/is/image/')) {
+    return src.split('?')[0];
+  }
+
+  return src;
+}
+
+/**
  * Parses the Stryker product hero carousel into an EDS Hero block.
  * Extracts the product image, heading, subtitle, description, and CTA.
  * @param {Element} element - The .c-autocarousel element
@@ -39,7 +64,10 @@ export default function parse(element, { document }) {
   const cells = [['Hero']];
 
   if (img) {
-    cells.push([img.cloneNode(true), contentCell]);
+    const imgClone = document.createElement('img');
+    imgClone.src = resolveImageUrl(img, document);
+    imgClone.alt = img.alt || '';
+    cells.push([imgClone, contentCell]);
   } else {
     cells.push([contentCell]);
   }
