@@ -24,6 +24,10 @@
           "instances": [".cols2 > .colctrl"]
         },
         {
+          "name": "cards",
+          "instances": [".cols3"]
+        },
+        {
           "name": "connect-banner",
           "instances": [".cols > .colctrl"]
         },

@@ -6,6 +6,7 @@ import hcpBannerParser from './parsers/hcp-banner.js';
 import heroParser from './parsers/hero.js';
 import stickyNavParser from './parsers/sticky-nav.js';
 import columnsOverviewParser from './parsers/columns-overview.js';
+import cardsParser from './parsers/cards.js';
 import connectBannerParser from './parsers/connect-banner.js';
 import formParser from './parsers/form.js';
 import tabsResourcesParser from './parsers/tabs-resources.js';
@@ -21,6 +22,7 @@ const parsers = {
   'hero': heroParser,
   'sticky-nav': stickyNavParser,
   'columns-overview': columnsOverviewParser,
+  'cards': cardsParser,
   'connect-banner': connectBannerParser,
   'form': formParser,
   'tabs-resources': tabsResourcesParser,
@@ -56,6 +58,10 @@ const PAGE_TEMPLATE = {
     {
       name: 'columns-overview',
       instances: ['.cols2 > .colctrl'],
+    },
+    {
+      name: 'cards',
+      instances: ['.cols3'],
     },
     {
       name: 'connect-banner',
