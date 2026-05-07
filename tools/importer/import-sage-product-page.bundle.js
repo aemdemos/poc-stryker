@@ -174,35 +174,42 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/form.js
-  function parse6(element, { document, url, params }) {
-    const originalURL = params && params.originalURL || url || "https://www.stryker.com/us/en/sage/products/sage-air-pump.html";
-    const pageUrl = new URL(originalURL);
-    const pagePath = pageUrl.pathname.replace(/\.html$/, "").replace(/\/$/, "");
-    const formJsonPath = `${pagePath}-form.json`;
-    const formContainer = element.querySelector("[data-marketo-form-id]");
-    const baseUrl = formContainer ? formContainer.getAttribute("data-marketo-base-url") : "//lp.stryker.com";
-    const munchkinId = formContainer ? formContainer.getAttribute("data-marketo-munchkin-id") : "338-WAP-571";
-    const formId = formContainer ? formContainer.getAttribute("data-marketo-form-id") : "2327";
-    const submitUrl = `https:${baseUrl}/form/${munchkinId}/${formId}`;
-    const formLink = document.createElement("a");
-    formLink.href = formJsonPath;
-    formLink.textContent = formJsonPath;
-    const submitLink = document.createElement("a");
-    submitLink.href = submitUrl;
-    submitLink.textContent = submitUrl;
-    const contentCell = document.createElement("div");
-    const p1 = document.createElement("p");
-    p1.appendChild(formLink);
-    contentCell.appendChild(p1);
-    const p2 = document.createElement("p");
-    p2.appendChild(submitLink);
-    contentCell.appendChild(p2);
-    const cells = [
-      ["Form"],
-      [contentCell]
-    ];
-    const table = WebImporter.DOMUtils.createTable(cells, document);
-    element.replaceWith(table);
+  function parse6(element, { document }) {
+    const form = element.querySelector('form[id^="mktoForm_"]');
+    if (!form) return;
+    const wrapper = document.createElement("div");
+    const fieldWraps = form.querySelectorAll(".mktoFieldWrap");
+    fieldWraps.forEach((fieldWrap) => {
+      const labelEl = fieldWrap.querySelector("label");
+      if (!labelEl) return;
+      const labelText = labelEl.textContent.replace(/^\*/, "").trim();
+      if (!labelText) return;
+      const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
+      const checkbox = fieldWrap.querySelector(".mktoCheckboxList");
+      const isRequired = fieldWrap.classList.contains("mktoRequiredField");
+      if (input) {
+        const p = document.createElement("p");
+        const text = isRequired ? `${labelText} *` : labelText;
+        p.textContent = text;
+        wrapper.appendChild(p);
+      } else if (checkbox) {
+        const checkLabel = checkbox.querySelector("label");
+        if (checkLabel) {
+          const p = document.createElement("p");
+          p.textContent = `${checkLabel.textContent.trim()}`;
+          wrapper.appendChild(p);
+        }
+      }
+    });
+    const submitBtn = form.querySelector('button[type="submit"], .mktoButton');
+    if (submitBtn) {
+      const p = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = submitBtn.textContent.trim();
+      p.appendChild(strong);
+      wrapper.appendChild(p);
+    }
+    element.replaceWith(wrapper);
   }
 
   // tools/importer/parsers/tabs-resources.js
@@ -210,6 +217,7 @@ var CustomImportScript = (() => {
     const tabLinks = element.querySelectorAll(".tab-link");
     const tabContents = element.querySelectorAll(".tab-content");
     if (tabLinks.length === 0) return;
+    const videoBlocks = [];
     const cells = [["Tabs"]];
     tabLinks.forEach((link, index) => {
       const label = link.textContent.trim();
@@ -242,15 +250,16 @@ var CustomImportScript = (() => {
           const videoAsset = video.querySelector("[data-asset-path]");
           if (videoAsset) {
             const assetName = videoAsset.getAttribute("data-asset-name") || "";
-            const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
             const assetPath = videoAsset.getAttribute("data-asset-path") || "";
-            if (videoTitle) {
-              const h = document.createElement("h3");
-              h.textContent = videoTitle.textContent.trim();
-              contentCell.appendChild(h);
-            }
+            const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
             if (assetPath) {
-              const videoUrl = `${videoServer}${assetPath}`;
+              let videoUrl = `${videoServer}${assetPath}`;
+              if (assetName && assetName.endsWith(".mp4")) {
+                videoUrl = `${videoUrl}/${assetName}`;
+              } else if (!videoUrl.includes(".mp4")) {
+                videoUrl = `${videoUrl}.mp4`;
+              }
+              const titleEl = videoTitle ? videoTitle.cloneNode(true) : null;
               const videoLinkP = document.createElement("p");
               const videoLink = document.createElement("a");
               videoLink.href = videoUrl;
@@ -261,19 +270,30 @@ var CustomImportScript = (() => {
                 [videoLinkP]
               ];
               const videoTable = WebImporter.DOMUtils.createTable(videoCells, document);
-              contentCell.appendChild(videoTable);
+              videoBlocks.push({ title: titleEl, table: videoTable });
             }
           }
         });
+        if (videos.length > 0 && contentCell.children.length === 0) {
+          return;
+        }
       }
       if (contentCell.children.length > 0) {
         cells.push([label, contentCell]);
-      } else {
-        cells.push([label, ""]);
       }
     });
+    if (cells.length <= 1) {
+      element.remove();
+      return;
+    }
     const table = WebImporter.DOMUtils.createTable(cells, document);
-    element.replaceWith(table);
+    const container = document.createElement("div");
+    container.appendChild(table);
+    videoBlocks.forEach(({ title, table: videoTable }) => {
+      if (title) container.appendChild(title);
+      container.appendChild(videoTable);
+    });
+    element.replaceWith(container);
   }
 
   // tools/importer/parsers/columns-resources.js
@@ -362,11 +382,7 @@ var CustomImportScript = (() => {
       element.querySelectorAll("img").forEach((img) => {
         const src = img.src || img.getAttribute("src") || "";
         if (src.includes("media-assets.stryker.com/is/image/stryker/")) {
-          const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
-          if (match) {
-            const assetName = match[1];
-            img.src = `https://www.stryker.com/content/dam/stryker/sage/images/${assetName}.png`;
-          }
+          img.src = src.split("?")[0];
         }
       });
       element.querySelectorAll("div:empty").forEach((el) => {

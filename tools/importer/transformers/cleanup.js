@@ -71,19 +71,11 @@ export default function transform(hookName, element, payload) {
       if (!el.closest('table')) el.remove();
     });
 
-    // Convert media-assets.stryker.com image URLs to www.stryker.com/content/dam/ paths
-    // EDS cannot proxy Scene7 URLs but can resolve www.stryker.com DAM paths
+    // Strip Scene7 query params from images so adjustImageUrls can fetch them
     element.querySelectorAll('img').forEach((img) => {
       const src = img.src || img.getAttribute('src') || '';
       if (src.includes('media-assets.stryker.com/is/image/stryker/')) {
-        // Extract the asset name from Scene7 URL
-        // e.g. https://media-assets.stryker.com/is/image/stryker/LinkedIn_100x100?$max_width_1440$
-        const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
-        if (match) {
-          const assetName = match[1];
-          // Convert to DAM path
-          img.src = `https://www.stryker.com/content/dam/stryker/sage/images/${assetName}.png`;
-        }
+        img.src = src.split('?')[0];
       }
     });
 

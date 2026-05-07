@@ -2,47 +2,55 @@
 /* global WebImporter */
 
 /**
- * Parses the Marketo form into an EDS Form block.
- * Creates a Form block with a link to the form JSON definition and a submit endpoint.
+ * Parses the Marketo form into a simple text representation.
+ * Since EDS strips HTML form elements, we output the form fields
+ * as structured default content that shows labels clearly.
  * @param {Element} element - The .marketoform element
  * @param {Object} context - { document, url, params }
  */
-export default function parse(element, { document, url, params }) {
-  // Determine the form JSON path based on the page path
-  const originalURL = (params && params.originalURL) || url || 'https://www.stryker.com/us/en/sage/products/sage-air-pump.html';
-  const pageUrl = new URL(originalURL);
-  const pagePath = pageUrl.pathname.replace(/\.html$/, '').replace(/\/$/, '');
-  const formJsonPath = `${pagePath}-form.json`;
+export default function parse(element, { document }) {
+  const form = element.querySelector('form[id^="mktoForm_"]');
+  if (!form) return;
 
-  // Extract submit URL from the Marketo form
-  const formContainer = element.querySelector('[data-marketo-form-id]');
-  const baseUrl = formContainer ? formContainer.getAttribute('data-marketo-base-url') : '//lp.stryker.com';
-  const munchkinId = formContainer ? formContainer.getAttribute('data-marketo-munchkin-id') : '338-WAP-571';
-  const formId = formContainer ? formContainer.getAttribute('data-marketo-form-id') : '2327';
-  const submitUrl = `https:${baseUrl}/form/${munchkinId}/${formId}`;
+  const wrapper = document.createElement('div');
 
-  // Create links for the form block
-  const formLink = document.createElement('a');
-  formLink.href = formJsonPath;
-  formLink.textContent = formJsonPath;
+  // Extract each field as a paragraph with label
+  const fieldWraps = form.querySelectorAll('.mktoFieldWrap');
+  fieldWraps.forEach((fieldWrap) => {
+    const labelEl = fieldWrap.querySelector('label');
+    if (!labelEl) return;
 
-  const submitLink = document.createElement('a');
-  submitLink.href = submitUrl;
-  submitLink.textContent = submitUrl;
+    const labelText = labelEl.textContent.replace(/^\*/, '').trim();
+    if (!labelText) return;
 
-  const contentCell = document.createElement('div');
-  const p1 = document.createElement('p');
-  p1.appendChild(formLink);
-  contentCell.appendChild(p1);
-  const p2 = document.createElement('p');
-  p2.appendChild(submitLink);
-  contentCell.appendChild(p2);
+    const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
+    const checkbox = fieldWrap.querySelector('.mktoCheckboxList');
+    const isRequired = fieldWrap.classList.contains('mktoRequiredField');
 
-  const cells = [
-    ['Form'],
-    [contentCell],
-  ];
+    if (input) {
+      const p = document.createElement('p');
+      const text = isRequired ? `${labelText} *` : labelText;
+      p.textContent = text;
+      wrapper.appendChild(p);
+    } else if (checkbox) {
+      const checkLabel = checkbox.querySelector('label');
+      if (checkLabel) {
+        const p = document.createElement('p');
+        p.textContent = `${checkLabel.textContent.trim()}`;
+        wrapper.appendChild(p);
+      }
+    }
+  });
 
-  const table = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(table);
+  // Add submit button
+  const submitBtn = form.querySelector('button[type="submit"], .mktoButton');
+  if (submitBtn) {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = submitBtn.textContent.trim();
+    p.appendChild(strong);
+    wrapper.appendChild(p);
+  }
+
+  element.replaceWith(wrapper);
 }
