@@ -2,9 +2,8 @@
 /* global WebImporter */
 
 /**
- * Parses the Marketo form into a simple text representation.
- * Since EDS strips HTML form elements, we output the form fields
- * as structured default content that shows labels clearly.
+ * Parses the Marketo form into a contact-form block table.
+ * Extracts field labels, types, and select options.
  * @param {Element} element - The .marketoform element
  * @param {Object} context - { document, url, params }
  */
@@ -12,9 +11,8 @@ export default function parse(element, { document }) {
   const form = element.querySelector('form[id^="mktoForm_"]');
   if (!form) return;
 
-  const wrapper = document.createElement('div');
+  const cells = [['Contact Form']];
 
-  // Extract each field as a paragraph with label
   const fieldWraps = form.querySelectorAll('.mktoFieldWrap');
   fieldWraps.forEach((fieldWrap) => {
     const labelEl = fieldWrap.querySelector('label');
@@ -26,31 +24,39 @@ export default function parse(element, { document }) {
     const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
     const checkbox = fieldWrap.querySelector('.mktoCheckboxList');
     const isRequired = fieldWrap.classList.contains('mktoRequiredField');
+    const fieldLabel = isRequired ? `${labelText} *` : labelText;
 
     if (input) {
-      const p = document.createElement('p');
-      const text = isRequired ? `${labelText} *` : labelText;
-      p.textContent = text;
-      wrapper.appendChild(p);
+      let fieldType = 'text';
+      if (input.tagName === 'SELECT') fieldType = 'select';
+      else if (input.tagName === 'TEXTAREA') fieldType = 'textarea';
+      else if (input.type === 'email') fieldType = 'email';
+
+      const row = [fieldLabel, fieldType];
+
+      // Extract select options
+      if (input.tagName === 'SELECT') {
+        const options = [...input.querySelectorAll('option')]
+          .filter((opt) => opt.value && !opt.disabled)
+          .map((opt) => opt.textContent.trim());
+        if (options.length > 0) row.push(options.join(','));
+      }
+
+      cells.push(row);
     } else if (checkbox) {
       const checkLabel = checkbox.querySelector('label');
       if (checkLabel) {
-        const p = document.createElement('p');
-        p.textContent = `${checkLabel.textContent.trim()}`;
-        wrapper.appendChild(p);
+        cells.push([`${checkLabel.textContent.trim()} *`, 'checkbox']);
       }
     }
   });
 
-  // Add submit button
+  // Submit button
   const submitBtn = form.querySelector('button[type="submit"], .mktoButton');
   if (submitBtn) {
-    const p = document.createElement('p');
-    const strong = document.createElement('strong');
-    strong.textContent = submitBtn.textContent.trim();
-    p.appendChild(strong);
-    wrapper.appendChild(p);
+    cells.push([submitBtn.textContent.trim(), 'submit']);
   }
 
-  element.replaceWith(wrapper);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

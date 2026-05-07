@@ -23,17 +23,25 @@ function createCheckboxField(cleanLabel, required) {
   return labelEl;
 }
 
-function createSelectField(cleanLabel, required) {
+function createSelectField(cleanLabel, required, options) {
   const fragment = document.createDocumentFragment();
   fragment.appendChild(createLabel(cleanLabel, required));
   const select = document.createElement('select');
   if (required) select.required = true;
-  const opt = document.createElement('option');
-  opt.value = '';
-  opt.textContent = 'Select...';
-  opt.disabled = true;
-  opt.selected = true;
-  select.appendChild(opt);
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select...';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  select.appendChild(placeholder);
+  if (options) {
+    options.split(',').forEach((val) => {
+      const opt = document.createElement('option');
+      opt.value = val.trim();
+      opt.textContent = val.trim();
+      select.appendChild(opt);
+    });
+  }
   fragment.appendChild(select);
   return fragment;
 }
@@ -69,7 +77,10 @@ export default function decorate(block) {
     if (cells.length < 2) return;
 
     const label = cells[0].textContent.trim();
-    const type = cells[1].textContent.trim().toLowerCase();
+    const rawType = cells[1].textContent.trim();
+    const parts = rawType.split('|');
+    const type = parts[0].trim().toLowerCase();
+    const options = parts.length > 1 ? parts[1].trim() : '';
     const required = label.endsWith('*');
     const cleanLabel = required ? label.slice(0, -1).trim() : label;
 
@@ -78,7 +89,7 @@ export default function decorate(block) {
 
     if (type === 'submit') fieldWrapper.appendChild(createSubmitField(cleanLabel));
     else if (type === 'checkbox') fieldWrapper.appendChild(createCheckboxField(cleanLabel, required));
-    else if (type === 'select') fieldWrapper.appendChild(createSelectField(cleanLabel, required));
+    else if (type === 'select') fieldWrapper.appendChild(createSelectField(cleanLabel, required, options));
     else if (type === 'textarea') fieldWrapper.appendChild(createTextareaField(cleanLabel, required));
     else fieldWrapper.appendChild(createInputField(cleanLabel, required, type));
 
