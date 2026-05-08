@@ -2,6 +2,29 @@
 /* global WebImporter */
 
 /**
+ * Converts media-assets.stryker.com URLs to www.stryker.com/content/dam path.
+ * Since Scene7 images at /is/image/ via www.stryker.com serve with wrong content-type,
+ * we keep the original media-assets URL but strip query params.
+ * The importer's adjustImageUrls will handle downloading.
+ */
+// Map Scene7 image names to EDS icon names
+const ICON_MAP = {
+  'Patient%20Transfer_Icon': 'inbed-positioning',
+  'Patient%20Repositioning_Icon': 'lateral-transfer',
+  'Patient%20Lifting_Icon': 'vertical-transfer',
+  'Patient Transfer_Icon': 'inbed-positioning',
+  'Patient Repositioning_Icon': 'lateral-transfer',
+  'Patient Lifting_Icon': 'vertical-transfer',
+};
+
+function getIconName(src) {
+  if (!src) return null;
+  const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+  if (!match) return null;
+  return ICON_MAP[match[1]] || ICON_MAP[decodeURIComponent(match[1])] || null;
+}
+
+/**
  * Parses a cols3 section (3-column icon cards) into an EDS Cards block.
  * Each card has an icon image, title, and description.
  * @param {Element} element - The .cols3 element
@@ -34,16 +57,25 @@ export default function parse(element, { document }) {
     }
 
     if (img) {
-      const imgEl = document.createElement('img');
-      imgEl.src = img.src;
-      imgEl.alt = img.alt || title;
-      cells.push([imgEl, contentCell]);
+      const iconName = getIconName(img.src || '');
+      if (iconName) {
+        const iconCell = document.createElement('div');
+        const p = document.createElement('p');
+        p.textContent = `:${iconName}:`;
+        iconCell.appendChild(p);
+        cells.push([iconCell, contentCell]);
+      } else {
+        const imgEl = document.createElement('img');
+        imgEl.src = (img.src || '').split('?')[0];
+        imgEl.alt = img.alt || title;
+        cells.push([imgEl, contentCell]);
+      }
     } else {
       cells.push([contentCell]);
     }
   });
 
-  // Include the preceding section title if it exists
+  // Include the preceding section title
   const prevSibling = element.previousElementSibling;
   const sectionHeading = prevSibling ? prevSibling.querySelector('h2') : null;
 

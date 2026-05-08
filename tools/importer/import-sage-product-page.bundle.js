@@ -154,6 +154,20 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/cards.js
+  var ICON_MAP = {
+    "Patient%20Transfer_Icon": "inbed-positioning",
+    "Patient%20Repositioning_Icon": "lateral-transfer",
+    "Patient%20Lifting_Icon": "vertical-transfer",
+    "Patient Transfer_Icon": "inbed-positioning",
+    "Patient Repositioning_Icon": "lateral-transfer",
+    "Patient Lifting_Icon": "vertical-transfer"
+  };
+  function getIconName(src) {
+    if (!src) return null;
+    const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+    if (!match) return null;
+    return ICON_MAP[match[1]] || ICON_MAP[decodeURIComponent(match[1])] || null;
+  }
   function parse5(element, { document }) {
     const cards = element.querySelectorAll('.col-xs-12[class*="col-sm"], .col-xs-12[class*="col-md"]');
     if (cards.length === 0) return;
@@ -177,10 +191,19 @@ var CustomImportScript = (() => {
         contentCell.appendChild(p);
       }
       if (img) {
-        const imgEl = document.createElement("img");
-        imgEl.src = img.src;
-        imgEl.alt = img.alt || title;
-        cells.push([imgEl, contentCell]);
+        const iconName = getIconName(img.src || "");
+        if (iconName) {
+          const iconCell = document.createElement("div");
+          const p = document.createElement("p");
+          p.textContent = `:${iconName}:`;
+          iconCell.appendChild(p);
+          cells.push([iconCell, contentCell]);
+        } else {
+          const imgEl = document.createElement("img");
+          imgEl.src = (img.src || "").split("?")[0];
+          imgEl.alt = img.alt || title;
+          cells.push([imgEl, contentCell]);
+        }
       } else {
         cells.push([contentCell]);
       }
@@ -427,8 +450,8 @@ var CustomImportScript = (() => {
             } else {
               img.replaceWith(document.createTextNode(`:${iconMap[match[1]]}:`));
             }
-          } else {
-            img.src = src.split("?")[0];
+          } else if (!img.closest("table")) {
+            img.src = src.replace("media-assets.stryker.com", "www.stryker.com").split("?")[0];
           }
         }
       });

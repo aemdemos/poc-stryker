@@ -87,8 +87,8 @@ export default function transform(hookName, element, payload) {
           } else {
             img.replaceWith(document.createTextNode(`:${iconMap[match[1]]}:`));
           }
-        } else {
-          img.src = src.split('?')[0];
+        } else if (!img.closest('table')) {
+          img.src = src.replace('media-assets.stryker.com', 'www.stryker.com').split('?')[0];
         }
       }
     });
