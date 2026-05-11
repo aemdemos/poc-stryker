@@ -75,16 +75,22 @@ export default function parse(element, { document }) {
     }
   });
 
-  // Include the preceding section title
+  // Find and absorb the preceding section title (from the .cols div before .cols3)
   const prevSibling = element.previousElementSibling;
-  const sectionHeading = prevSibling ? prevSibling.querySelector('h2') : null;
+  let headingText = '';
+  if (prevSibling && (prevSibling.classList.contains('cols') || prevSibling.querySelector('.sectionseparator'))) {
+    const h2El = prevSibling.querySelector('h2');
+    if (h2El) {
+      headingText = h2El.textContent.trim();
+    }
+    prevSibling.remove();
+  }
 
   const container = document.createElement('div');
-  if (sectionHeading) {
+  if (headingText) {
     const h2 = document.createElement('h2');
-    h2.textContent = sectionHeading.textContent.trim();
+    h2.textContent = headingText;
     container.appendChild(h2);
-    prevSibling.remove();
   }
 
   const table = WebImporter.DOMUtils.createTable(cells, document);

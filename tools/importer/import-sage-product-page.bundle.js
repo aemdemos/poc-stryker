@@ -126,7 +126,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/columns-overview.js
-  function parse4(element, { document }) {
+  function parse4(element, { document, url, params }) {
     const columns = element.querySelectorAll('.row > [class*="col-"]');
     if (columns.length < 2) return;
     const leftCol = columns[0];
@@ -144,6 +144,22 @@ var CustomImportScript = (() => {
       Array.from(rightRte.children).forEach((child) => {
         rightContent.appendChild(child.cloneNode(true));
       });
+    }
+    const videoAsset = rightCol.querySelector("[data-asset-path]");
+    if (videoAsset) {
+      const assetPath = videoAsset.getAttribute("data-asset-path") || "";
+      const viewerPath = videoAsset.getAttribute("data-viewer-path") || "https://media-assets.stryker.com/s7viewers/";
+      const imageServer = videoAsset.getAttribute("data-imageserver") || "https://media-assets.stryker.com/is/image/";
+      const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+      if (assetPath) {
+        const videoUrl = `${viewerPath}html5/VideoViewer.html?asset=${assetPath}&serverurl=${imageServer}&videoserverurl=${videoServer}`;
+        const p = document.createElement("p");
+        const a = document.createElement("a");
+        a.href = videoUrl;
+        a.textContent = videoUrl;
+        p.appendChild(a);
+        rightContent.appendChild(p);
+      }
     }
     const cells = [
       ["Columns"],
@@ -209,21 +225,93 @@ var CustomImportScript = (() => {
       }
     });
     const prevSibling = element.previousElementSibling;
-    const sectionHeading = prevSibling ? prevSibling.querySelector("h2") : null;
-    const container = document.createElement("div");
-    if (sectionHeading) {
-      const h2 = document.createElement("h2");
-      h2.textContent = sectionHeading.textContent.trim();
-      container.appendChild(h2);
+    let headingText = "";
+    if (prevSibling && (prevSibling.classList.contains("cols") || prevSibling.querySelector(".sectionseparator"))) {
+      const h2El = prevSibling.querySelector("h2");
+      if (h2El) {
+        headingText = h2El.textContent.trim();
+      }
       prevSibling.remove();
+    }
+    const container = document.createElement("div");
+    if (headingText) {
+      const h2 = document.createElement("h2");
+      h2.textContent = headingText;
+      container.appendChild(h2);
     }
     const table = WebImporter.DOMUtils.createTable(cells, document);
     container.appendChild(table);
     element.replaceWith(container);
   }
 
-  // tools/importer/parsers/connect-banner.js
+  // tools/importer/parsers/did-you-know.js
   function parse6(element, { document }) {
+    const xfContent = element.querySelector(".xf-content-height");
+    if (!xfContent) return;
+    const img = xfContent.querySelector("img");
+    const rightBlock = xfContent.querySelector('.aem-GridColumn--default--9, [class*="GridColumn--default--9"]');
+    if (!rightBlock) return;
+    const rightContent = document.createElement("div");
+    const h2 = rightBlock.querySelector("h2");
+    if (h2) {
+      const heading = document.createElement("h2");
+      heading.textContent = h2.textContent.trim();
+      rightContent.appendChild(heading);
+    }
+    const statContainers = rightBlock.querySelectorAll(".buildingblock .c-rich-text-editor div[style]");
+    statContainers.forEach((container) => {
+      const statNumber = container.querySelector(".fontsize-3em, .fontsize-2-5em, .futura-bold");
+      const statDesc = container.querySelectorAll("p");
+      if (statNumber && statDesc.length > 1) {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = statNumber.textContent.trim();
+        p.appendChild(strong);
+        p.appendChild(document.createTextNode(` \u2014 ${statDesc[statDesc.length - 1].textContent.trim()}`));
+        rightContent.appendChild(p);
+      }
+    });
+    const list = rightBlock.querySelector("ul");
+    if (list) {
+      rightContent.appendChild(list.cloneNode(true));
+    }
+    const rteContainers = rightBlock.querySelectorAll(".c-rich-text-editor div[style]");
+    rteContainers.forEach((rte) => {
+      const paragraphs = rte.querySelectorAll("p");
+      paragraphs.forEach((p) => {
+        const link = p.querySelector("a");
+        if (link && link.textContent.includes("Learn more")) {
+          const ctaP = document.createElement("p");
+          const a = document.createElement("a");
+          a.href = link.href;
+          a.textContent = link.textContent.trim();
+          ctaP.appendChild(a);
+          rightContent.appendChild(ctaP);
+        } else if (p.textContent.trim().length > 50 && !p.querySelector(".futura-bold")) {
+          const descP = document.createElement("p");
+          descP.textContent = p.textContent.trim();
+          rightContent.appendChild(descP);
+        }
+      });
+    });
+    const leftContent = document.createElement("div");
+    if (img) {
+      const imgEl = document.createElement("img");
+      const src = (img.src || "").split("?")[0];
+      imgEl.src = src.includes("media-assets.stryker.com") ? src.replace("media-assets.stryker.com", "www.stryker.com") : src;
+      imgEl.alt = img.alt || "";
+      leftContent.appendChild(imgEl);
+    }
+    const cells = [
+      ["Columns"],
+      [leftContent, rightContent]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/connect-banner.js
+  function parse7(element, { document }) {
     const rte = element.querySelector(".has-background");
     if (!rte) return;
     const contentCell = document.createElement("div");
@@ -243,7 +331,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/form.js
-  function parse7(element, { document }) {
+  function parse8(element, { document }) {
     const form = element.querySelector('form[id^="mktoForm_"]');
     if (!form) return;
     const cells = [["Contact Form"]];
@@ -284,7 +372,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/tabs-resources.js
-  function parse8(element, { document }) {
+  function parse9(element, { document }) {
     const tabLinks = element.querySelectorAll(".tab-link");
     const tabContents = element.querySelectorAll(".tab-content");
     if (tabLinks.length === 0) return;
@@ -353,7 +441,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/columns-resources.js
-  function parse9(element, { document }) {
+  function parse10(element, { document }) {
     const sectionTitle = element.querySelector("#sage h2, .c-section-title h2");
     const buildingBlocks = element.querySelectorAll(".buildingblock .c-rich-text-editor div[style]");
     if (buildingBlocks.length < 3) return;
@@ -504,10 +592,11 @@ var CustomImportScript = (() => {
     "sticky-nav": parse3,
     "columns-overview": parse4,
     "cards": parse5,
-    "connect-banner": parse6,
-    "form": parse7,
-    "tabs-resources": parse8,
-    "columns-resources": parse9
+    "did-you-know": parse6,
+    "connect-banner": parse7,
+    "form": parse8,
+    "tabs-resources": parse9,
+    "columns-resources": parse10
   };
   var transformers = [
     transform,
@@ -541,8 +630,12 @@ var CustomImportScript = (() => {
         instances: [".cols3"]
       },
       {
+        name: "did-you-know",
+        instances: [".experiencefragment:has(.bg-dark-blue-gradient)"]
+      },
+      {
         name: "connect-banner",
-        instances: [".cols > .colctrl"]
+        instances: [".cols > .colctrl:has(.has-background)"]
       },
       {
         name: "form",

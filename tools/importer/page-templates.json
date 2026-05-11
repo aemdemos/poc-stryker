@@ -28,8 +28,12 @@
           "instances": [".cols3"]
         },
         {
+          "name": "did-you-know",
+          "instances": [".experiencefragment:has(.bg-dark-blue-gradient)"]
+        },
+        {
           "name": "connect-banner",
-          "instances": [".cols > .colctrl"]
+          "instances": [".cols > .colctrl:has(.has-background)"]
         },
         {
           "name": "form",

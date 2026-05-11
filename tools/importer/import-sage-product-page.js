@@ -7,6 +7,7 @@ import heroParser from './parsers/hero.js';
 import stickyNavParser from './parsers/sticky-nav.js';
 import columnsOverviewParser from './parsers/columns-overview.js';
 import cardsParser from './parsers/cards.js';
+import didYouKnowParser from './parsers/did-you-know.js';
 import connectBannerParser from './parsers/connect-banner.js';
 import formParser from './parsers/form.js';
 import tabsResourcesParser from './parsers/tabs-resources.js';
@@ -23,6 +24,7 @@ const parsers = {
   'sticky-nav': stickyNavParser,
   'columns-overview': columnsOverviewParser,
   'cards': cardsParser,
+  'did-you-know': didYouKnowParser,
   'connect-banner': connectBannerParser,
   'form': formParser,
   'tabs-resources': tabsResourcesParser,
@@ -64,8 +66,12 @@ const PAGE_TEMPLATE = {
       instances: ['.cols3'],
     },
     {
+      name: 'did-you-know',
+      instances: ['.experiencefragment:has(.bg-dark-blue-gradient)'],
+    },
+    {
       name: 'connect-banner',
-      instances: ['.cols > .colctrl'],
+      instances: ['.cols > .colctrl:has(.has-background)'],
     },
     {
       name: 'form',
