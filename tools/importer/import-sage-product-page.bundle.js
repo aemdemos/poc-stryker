@@ -185,6 +185,7 @@ var CustomImportScript = (() => {
     return ICON_MAP[match[1]] || ICON_MAP[decodeURIComponent(match[1])] || null;
   }
   function parse5(element, { document }) {
+    if (element.closest(".c-tabs, .tab-content")) return;
     const cards = element.querySelectorAll('.col-xs-12[class*="col-sm"], .col-xs-12[class*="col-md"]');
     if (cards.length === 0) return;
     const cells = [["Cards"]];
@@ -310,8 +311,36 @@ var CustomImportScript = (() => {
     element.replaceWith(table);
   }
 
-  // tools/importer/parsers/connect-banner.js
+  // tools/importer/parsers/faq-accordion.js
   function parse7(element, { document }) {
+    const panels = element.querySelectorAll('[id^="collapse_"]');
+    if (panels.length === 0) return;
+    const cells = [["Accordion"]];
+    panels.forEach((panel) => {
+      const panelId = panel.id;
+      const link = element.querySelector(`a[href="#${panelId}"]`);
+      const question = link ? link.textContent.trim() : "";
+      const answer = panel.textContent.trim();
+      if (question && answer) {
+        cells.push([question, answer]);
+      }
+    });
+    if (cells.length <= 1) return;
+    const container = document.createElement("div");
+    const prevSibling = element.previousElementSibling;
+    if (prevSibling && prevSibling.tagName === "H3" && prevSibling.textContent.includes("FAQ")) {
+      const h3 = document.createElement("h3");
+      h3.textContent = prevSibling.textContent.trim();
+      container.appendChild(h3);
+      prevSibling.remove();
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    container.appendChild(table);
+    element.replaceWith(container);
+  }
+
+  // tools/importer/parsers/connect-banner.js
+  function parse8(element, { document }) {
     const rte = element.querySelector(".has-background");
     if (!rte) return;
     const contentCell = document.createElement("div");
@@ -331,7 +360,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/form.js
-  function parse8(element, { document }) {
+  function parse9(element, { document }) {
     const form = element.querySelector('form[id^="mktoForm_"]');
     if (!form) return;
     const cells = [["Contact Form"]];
@@ -372,7 +401,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/tabs-resources.js
-  function parse9(element, { document }) {
+  function parse10(element, { document }) {
     const tabLinks = element.querySelectorAll(".tab-link");
     const tabContents = element.querySelectorAll(".tab-content");
     if (tabLinks.length === 0) return;
@@ -441,7 +470,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/columns-resources.js
-  function parse10(element, { document }) {
+  function parse11(element, { document }) {
     const sectionTitle = element.querySelector("#sage h2, .c-section-title h2");
     const buildingBlocks = element.querySelectorAll(".buildingblock .c-rich-text-editor div[style]");
     if (buildingBlocks.length < 3) return;
@@ -593,10 +622,11 @@ var CustomImportScript = (() => {
     "columns-overview": parse4,
     "cards": parse5,
     "did-you-know": parse6,
-    "connect-banner": parse7,
-    "form": parse8,
-    "tabs-resources": parse9,
-    "columns-resources": parse10
+    "faq-accordion": parse7,
+    "connect-banner": parse8,
+    "form": parse9,
+    "tabs-resources": parse10,
+    "columns-resources": parse11
   };
   var transformers = [
     transform,
@@ -632,6 +662,10 @@ var CustomImportScript = (() => {
       {
         name: "did-you-know",
         instances: [".experiencefragment:has(.bg-dark-blue-gradient)"]
+      },
+      {
+        name: "faq-accordion",
+        instances: [".panel-group"]
       },
       {
         name: "connect-banner",

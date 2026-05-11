@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-primofit.html",
+  "path": "us/en/sage/products/sage-primofit",
+  "timestamp": "2026-05-11T14:41:21.948Z",
+  "title": "Sage PrimoFit+ External Urine Management for the Male Anatomy | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "faq-accordion",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

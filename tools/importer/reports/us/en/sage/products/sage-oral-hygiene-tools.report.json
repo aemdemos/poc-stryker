@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-oral-hygiene-tools.html",
+  "path": "us/en/sage/products/sage-oral-hygiene-tools",
+  "timestamp": "2026-05-11T14:40:44.993Z",
+  "title": "Sage oral hygiene tools | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

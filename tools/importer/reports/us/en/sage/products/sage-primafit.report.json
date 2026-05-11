@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-primafit.html",
+  "path": "us/en/sage/products/sage-primafit",
+  "timestamp": "2026-05-11T14:41:11.299Z",
+  "title": "Sage PrimaFit External Urine Management for the Female Anatomy | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "cards",
+    "faq-accordion",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

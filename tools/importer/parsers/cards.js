@@ -31,6 +31,9 @@ function getIconName(src) {
  * @param {Object} context - { document, url, params }
  */
 export default function parse(element, { document }) {
+  // Skip .cols3 elements inside tabs (they contain videos, not cards)
+  if (element.closest('.c-tabs, .tab-content')) return;
+
   const cards = element.querySelectorAll('.col-xs-12[class*="col-sm"], .col-xs-12[class*="col-md"]');
   if (cards.length === 0) return;
 

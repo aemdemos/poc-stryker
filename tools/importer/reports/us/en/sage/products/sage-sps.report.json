@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-sps.html",
+  "path": "us/en/sage/products/sage-sps",
+  "timestamp": "2026-05-11T14:41:59.135Z",
+  "title": "Sage Prevalon Seated Positioning System (SPS) | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

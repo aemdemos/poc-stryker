@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-nose-to-toes.html",
+  "path": "us/en/sage/products/sage-nose-to-toes",
+  "timestamp": "2026-05-11T14:40:09.289Z",
+  "title": "Sage Nose to Toes Pre-Op Prepping Systems | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

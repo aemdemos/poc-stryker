@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-barrier-cream-cloths.html",
+  "path": "us/en/sage/products/sage-barrier-cream-cloths",
+  "timestamp": "2026-05-11T14:37:20.060Z",
+  "title": "Sage Comfort Shield Barrier Cream Cloths | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "faq-accordion",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

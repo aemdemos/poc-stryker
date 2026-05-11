@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-self-oral-care.html",
+  "path": "us/en/sage/products/sage-self-oral-care",
+  "timestamp": "2026-05-11T14:41:47.588Z",
+  "title": "Sage Self Oral Care Toothbrush with Corinz Antiseptic Cleansing and Moisturizing Oral Rinse | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-multi-position-mats.html",
+  "path": "us/en/sage/products/sage-multi-position-mats",
+  "timestamp": "2026-05-11T14:39:59.163Z",
+  "title": "Sage Multi-Position MATS 2.0 Mobile Air Transfer System | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

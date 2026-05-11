@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-oral-solutions-and-moisturizers.html",
+  "path": "us/en/sage/products/sage-oral-solutions-and-moisturizers",
+  "timestamp": "2026-05-11T14:40:57.951Z",
+  "title": "Sage oral solutions and moisturizers | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

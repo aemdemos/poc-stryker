@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-chg-cloths.html",
+  "path": "us/en/sage/products/sage-chg-cloths",
+  "timestamp": "2026-05-11T14:37:46.042Z",
+  "title": "Sage 2% Chlorhexidine Gluconate (CHG) Cloths | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

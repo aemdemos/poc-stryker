@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-heel-protector-ii.html",
+  "path": "us/en/sage/products/sage-heel-protector-ii",
+  "timestamp": "2026-05-11T14:38:34.747Z",
+  "title": "Sage Prevalon Heel Protector II | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}
