@@ -13,6 +13,7 @@ import {
   toClassName,
   loadScript,
 } from './aem.js';
+import { createYoutubeIframeWrapper } from './utils.js';
 
 /** Max sections/children to process (CWE-770). */
 const MAX_SECTIONS = 100;
@@ -45,6 +46,20 @@ export async function ensureDOMPurify() {
     domPurifyReady = loadScript(`${base}/scripts/dompurify.min.js`);
   }
   return domPurifyReady;
+}
+
+/**
+ * YouTube iframe wrapper (16:9, lazy iframe). Uses DOM APIs — DOMPurify strips iframes from strings.
+ * @param {string|URL} urlLike Watch or youtu.be URL
+ * @returns {Element|null}
+ */
+export function embedYoutubeIframeFromUrl(urlLike) {
+  try {
+    const url = typeof urlLike === 'string' ? new URL(urlLike, window.location.href) : urlLike;
+    return createYoutubeIframeWrapper(url, false, false);
+  } catch {
+    return null;
+  }
 }
 
 /**

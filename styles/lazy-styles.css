@@ -1,1 +1,157 @@
 /* add global styles that can be loaded post LCP here */
+
+/* TEACH Talks course overview — section canvas (banner bar is on the h2) */
+main .section.golden {
+  --stryker-banner-te: #ffb500;
+  --stryker-banner-ach: #000;
+
+  /*
+   * No outer margin-block: border-top from .cards-container must sit flush with prior section
+   * (same as columns). Vertical rhythm comes from `main > .section { padding: 40px 0 }`; do not
+   * zero padding-block or the hairline separates from padded content wrongly.
+   */
+  margin-block: 0;
+
+  padding-inline: 0;
+  background: transparent;
+  color: var(--text-color);
+}
+
+main .section.golden > .default-content-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--max-width-site);
+  margin-inline: auto;
+
+  /*
+   * Remove section gutter doubled on first block — outer `main > .section > div` padding cleared here
+   * so banner aligns like source; cards wrappers keep normal section padding unless overridden.
+   */
+  padding-inline: 0;
+  padding-block: 0;
+}
+
+/*
+ * H2 banner — source: .bg-golden-gradient.left-to-right + Futura-bold TE/ACH + URW Egyptienne “Talks…”.
+ * Only <em>/<strong> (TEACH) are bold — base h2 overrides global h2 semi-bold / heading font on suffix.
+ */
+main .section.golden .default-content-wrapper > h2 {
+  margin-block: 0 32px;
+  margin-inline: 0;
+  max-width: none;
+  box-sizing: border-box;
+  width: 100%;
+
+  /*
+   * Bar breathing room — wrapper has no gutter; inset comes from bar padding only.
+   */
+  padding: clamp(12px, 1.65vw, 17px) clamp(16px, 2.2vw, 28px);
+
+  /*
+   * “Talks: Course overview”: normal weight slab body (standard); font-weight inherits 400.
+   */
+  font-family: Rockwell, 'Rockwell Nova', Charter, 'Bitstream Charter', Cambria, 'Times New Roman', serif;
+  font-size: clamp(1.28rem, 1.5vw + 0.95rem, 1.68rem);
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--stryker-banner-ach);
+  letter-spacing: 0;
+  font-style: normal;
+
+  /*
+   * Source: `.bg-golden-gradient.left-to-right` — darken left edge only; #ffb500 from 20% to end.
+   */
+  background: linear-gradient(90deg, #af6d04, #ffb500 20%);
+}
+
+/* “TE” — yellow bold sans (source inline #ffb500; not a separate dark chip) */
+main .section.golden .default-content-wrapper > h2 em {
+  font-style: normal;
+  font-weight: 700;
+  font-family: var(--heading-font-family), sans-serif;
+  color: var(--stryker-banner-te);
+  display: inline;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+  line-height: inherit;
+  background: none;
+}
+
+/* “ACH” — black bold sans (Futura-bold in source) */
+main .section.golden .default-content-wrapper > h2 strong {
+  font-family: var(--heading-font-family), sans-serif;
+  font-weight: 700;
+  color: var(--stryker-banner-ach);
+}
+
+main .section.golden .cards-wrapper:last-of-type {
+  margin-bottom: clamp(24px, 4vw, 40px);
+}
+
+/*
+ * TEACH Talks hero (columns intro) — source uses gold accent headings + serif body column.
+ */
+main .section.columns-container {
+  /* Brand yellow from spec (matches Stryker TEACH source yellow-gold) */
+  --stryker-teach-accent: rgb(255, 181, 0);
+}
+
+/* Eyebrow: full-width chip like source — white bar, soft perimeter shadow; “Talks:” serif, “Shoulder” sans bold gold */
+main .section.columns-container .default-content-wrapper > p:first-of-type {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-block: 0 0.75rem;
+  padding: 10px 18px;
+  font-family: Cambria, 'Times New Roman', Times, Georgia, serif;
+  font-size: clamp(1.0625rem, 0.6vw + 0.92rem, 1.3125rem);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.35;
+  color: var(--text-color);
+  background-color: #fff;
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 22%),
+    0 6px 18px rgb(0 0 0 / 14%),
+    0 1px 0 rgb(0 0 0 / 12%);
+}
+
+main .section.columns-container .default-content-wrapper > p:first-of-type strong {
+  color: var(--stryker-teach-accent);
+  font-weight: 700;
+  font-family: var(--heading-font-family), sans-serif;
+}
+
+/* Title: larger display; authoring may wrap in <em> — render upright, not italic */
+main .section.columns-container .default-content-wrapper > h1 {
+  margin-block: 0 1.85rem;
+  font-family: var(--heading-font-family);
+  font-size: clamp(2.5rem, 5vw + 1.25rem, 3.75rem);
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--stryker-teach-accent);
+}
+
+main .section.columns-container .default-content-wrapper > h1 em {
+  font-style: normal;
+  color: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Serif copy column (matches source body / list typography) */
+main .section.columns-container .columns.columns-2-cols > div > div:not(.columns-img-col) {
+  font-family: Cambria, 'Times New Roman', Times, Georgia, serif;
+  font-size: var(--body-font-size-s);
+  line-height: 1.62;
+}
+
+main .section.columns-container .columns.columns-2-cols > div > div:not(.columns-img-col) strong {
+  font-weight: 700;
+  font-family: inherit;
+}

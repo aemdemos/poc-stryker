@@ -62,6 +62,49 @@ export function getYoutubeEmbedHtml(url, autoplay = false, background = false) {
   return wrapIframe(src, YOUTUBE_ALLOW, 'Content from Youtube');
 }
 
+/**
+ * YouTube embed as real DOM (DOMPurify’s HTML profile strips iframe nodes from strings).
+ * @param {URL} url Watch or youtu.be URL
+ * @param {boolean} [autoplay=false]
+ * @param {boolean} [background=false]
+ * @returns {HTMLDivElement}
+ */
+export function createYoutubeIframeWrapper(url, autoplay = false, background = false) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'iframe-wrapper';
+  wrapper.style.cssText = IFRAME_WRAPPER_STYLE;
+
+  const iframe = document.createElement('iframe');
+  iframe.src = getYoutubeSrc(url, autoplay, background);
+  iframe.style.cssText = IFRAME_STYLE;
+  iframe.setAttribute('allow', YOUTUBE_ALLOW);
+  iframe.setAttribute('allowfullscreen', '');
+  iframe.setAttribute('scrolling', 'no');
+  iframe.setAttribute('title', 'Content from Youtube');
+  iframe.setAttribute('loading', 'lazy');
+
+  wrapper.appendChild(iframe);
+  return wrapper;
+}
+
+export function createVimeoIframeWrapper(url, autoplay = false, background = false) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'iframe-wrapper';
+  wrapper.style.cssText = IFRAME_WRAPPER_STYLE;
+
+  const iframe = document.createElement('iframe');
+  iframe.src = getVimeoSrc(url, autoplay, background);
+  iframe.style.cssText = IFRAME_STYLE;
+  iframe.setAttribute('frameborder', '0');
+  iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+  iframe.setAttribute('allowfullscreen', '');
+  iframe.setAttribute('title', 'Content from Vimeo');
+  iframe.setAttribute('loading', 'lazy');
+
+  wrapper.appendChild(iframe);
+  return wrapper;
+}
+
 function getVimeoSrc(url, autoplay, background) {
   const [, video] = url.pathname.split('/');
   const params = (background || autoplay)

@@ -1,6 +1,6 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation, getBlockId } from '../../scripts/scripts.js';
-import { createCard } from '../card/card.js';
+import { createCard, normalizeCardYoutubeMedia } from '../card/card.js';
 
 export default function decorate(block) {
   const blockId = getBlockId('cards');
@@ -14,6 +14,7 @@ export default function decorate(block) {
   [...block.children].forEach((row) => {
     ul.append(createCard(row));
   });
+  [...ul.children].forEach((li) => normalizeCardYoutubeMedia(li));
   ul.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
     moveInstrumentation(img, optimizedPic.querySelector('img'));

@@ -4,18 +4,9 @@
  * https://www.hlx.live/developer/block-collection/video
  */
 
-import { ensureDOMPurify } from '../../scripts/scripts.js';
-import { DOMPURIFY } from '../../scripts/aem.js';
-import { getYoutubeEmbedHtml, getVimeoEmbedHtml } from '../../scripts/utils.js';
+import { createYoutubeIframeWrapper, createVimeoIframeWrapper } from '../../scripts/utils.js';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-async function htmlToElement(html) {
-  await ensureDOMPurify();
-  const temp = document.createElement('div');
-  temp.innerHTML = window.DOMPurify.sanitize(html, DOMPURIFY);
-  return temp.firstElementChild;
-}
 
 function getVideoElement(source, autoplay, background) {
   const video = document.createElement('video');
@@ -39,7 +30,7 @@ function getVideoElement(source, autoplay, background) {
   return video;
 }
 
-const loadVideoEmbed = async (block, link, autoplay, background) => {
+function loadVideoEmbed(block, link, autoplay, background) {
   if (block.dataset.embedLoaded === 'true') {
     return;
   }
@@ -49,13 +40,13 @@ const loadVideoEmbed = async (block, link, autoplay, background) => {
   const isVimeo = link.includes('vimeo');
 
   if (isYoutube) {
-    const embedWrapper = await htmlToElement(getYoutubeEmbedHtml(url, autoplay, background));
+    const embedWrapper = createYoutubeIframeWrapper(url, autoplay, background);
     block.append(embedWrapper);
     embedWrapper.querySelector('iframe').addEventListener('load', () => {
       block.dataset.embedLoaded = true;
     });
   } else if (isVimeo) {
-    const embedWrapper = await htmlToElement(getVimeoEmbedHtml(url, autoplay, background));
+    const embedWrapper = createVimeoIframeWrapper(url, autoplay, background);
     block.append(embedWrapper);
     embedWrapper.querySelector('iframe').addEventListener('load', () => {
       block.dataset.embedLoaded = true;
@@ -67,7 +58,7 @@ const loadVideoEmbed = async (block, link, autoplay, background) => {
       block.dataset.embedLoaded = true;
     });
   }
-};
+}
 
 export default async function decorate(block) {
   const placeholder = block.querySelector('picture');

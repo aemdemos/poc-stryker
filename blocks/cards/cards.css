@@ -11,19 +11,161 @@
 
 .cards > ul > li {
   border: var(--cards-card-border-width) solid var(--cards-card-border-color);
+  border-radius: var(--cards-card-border-radius);
+  box-shadow: var(--cards-card-shadow);
+  overflow: hidden;
   background-color: var(--background-color);
 }
 
 .cards .cards-card-body {
   margin: var(--cards-card-body-margin);
+  padding: var(--cards-card-body-padding);
 }
 
 .cards .cards-card-image {
   line-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.cards > ul > li .cards-card-image .iframe-wrapper {
+  width: 100%;
+}
+
+.cards > ul > li .cards-card-image .iframe-wrapper iframe {
+  margin: 0;
 }
 
 .cards > ul > li img {
   width: 100%;
   aspect-ratio: var(--cards-image-aspect-ratio);
   object-fit: var(--cards-image-object-fit);
+}
+
+/* ─── TEACH course overview (.section.golden) — horizontal chapter rows + typography ─── */
+
+/*
+ * Card *rows* are fixed 2 columns (source). `auto-fill` + minmax(...) created 3–4 tracks
+ * at 1360px, so pairs of cards stayed in the left tracks with empty space on the right.
+ * Width follows the normal section column (`--max-width-site` + horizontal padding); no full-bleed.
+ * A final row with one card stays one column — second column stays empty (visual “slot” for a 6th).
+ */
+main .section.golden .cards > ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(28px, 3.8vw, 48px);
+  row-gap: clamp(36px, 4.5vw, 56px);
+}
+
+/* Space between importer card groups (multiple `.cards-wrapper` siblings) */
+main .section.golden > .cards-wrapper:not(:last-child) {
+  margin-block-end: clamp(28px, 4vw, 48px);
+}
+
+/* Source cards: flat panels — no stroke, no elevation shadow */
+main .section.golden .cards > ul > li {
+  border: none;
+  box-shadow: none;
+}
+
+@media (width < 900px) {
+  main .section.golden .cards > ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section.golden .cards > ul > li .cards-card-body {
+    padding-block: 16px 20px;
+  }
+}
+
+@media (width >= 900px) {
+  main .section.golden .cards > ul > li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: clamp(16px, 2.5vw, 28px);
+  }
+
+  /*
+   * Video fills left column edge-to-edge; body aligns top with thumbnail (source parity).
+   */
+  main .section.golden .cards > ul > li .cards-card-image {
+    grid-column: 1;
+    margin: 0;
+  }
+
+  main .section.golden .cards > ul > li .cards-card-body {
+    grid-column: 2;
+    align-self: start;
+    padding: 8px clamp(14px, 2vw, 22px) 18px clamp(14px, 2vw, 22px);
+  }
+}
+
+main .section.golden .cards .cards-card-body p:first-of-type {
+  margin-block: 0 10px;
+  font-family: Cambria, 'Times New Roman', Times, Georgia, serif;
+
+  /*
+   * Entire chapter line reads bold black in source (“Chapter X: Title”).
+   */
+  font-size: var(--body-font-size-s);
+  font-weight: 700;
+  line-height: 1.42;
+  color: var(--text-color);
+}
+
+main .section.golden .cards .cards-card-body p:first-of-type strong {
+  font-weight: 700;
+  color: inherit;
+  font-family: inherit;
+}
+
+/*
+ * RSA row — source shows small yellow “View more information” plus bullet + teal link ▸.
+ * TODO i18n: move label into authored content once localized strings exist (EDS content rule).
+ */
+main .section.golden .cards .cards-card-body > p:last-of-type {
+  margin-block: 0;
+  margin-block-start: 6px;
+  padding-top: 14px;
+  border-top: 1px solid #e8e6e4;
+}
+
+main .section.golden .cards .cards-card-body > p:last-of-type::before {
+  display: block;
+  margin-block: 0 8px;
+
+  /*
+   * EN-only stopgap for visual parity — replace via document content for locales.
+   */
+  content: "View more information";
+  font-family: var(--body-font-family);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: rgb(255, 181, 0);
+}
+
+main .section.golden .cards .cards-card-body > p:last-of-type a {
+  display: inline-block;
+  position: relative;
+  font-family: var(--body-font-family);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cards-teach-rsa-teal);
+}
+
+main .section.golden .cards .cards-card-body > p:last-of-type a::before {
+  content: "•\00a0";
+}
+
+main .section.golden .cards .cards-card-body > p:last-of-type a::after {
+  content: "\00a0▸";
+}
+
+main .section.golden .cards .cards-card-body > p:last-of-type a:hover {
+  color: var(--cards-teach-rsa-teal);
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
 }

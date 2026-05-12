@@ -38,7 +38,7 @@
   --heading-font-size-xs: 22px;
 
   /* layout */
-  --max-width-site: 1200px;
+  --max-width-site: 1360px;
 
   /* nav heights */
   --nav-height: 64px;
@@ -286,6 +286,14 @@ main > .section > .bg-image img {
 
 main > .section:first-of-type {
   margin-top: 0;
+}
+
+/*
+ * Hairline above block-driven sections (visual break from prior content; full section width).
+ */
+main .section.columns-container,
+main .section.cards-container {
+  border-top: 1px solid rgb(0 0 0 / 22%);
 }
 
 @media (width >= 900px) {

@@ -1,7 +1,7 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation, getBlockId } from '../../scripts/scripts.js';
 import { createSliderControls, initSlider, showSlide } from '../../scripts/slider.js';
-import { createCard } from '../card/card.js';
+import { createCard, normalizeCardYoutubeMedia } from '../card/card.js';
 
 export default function decorate(block) {
   const blockId = getBlockId('card-carousel');
@@ -38,6 +38,8 @@ export default function decorate(block) {
     slidesWrapper.append(card);
     row.remove();
   });
+
+  [...slidesWrapper.children].forEach((li) => normalizeCardYoutubeMedia(li));
 
   slidesWrapper.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);

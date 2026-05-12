@@ -4,7 +4,7 @@
  * https://www.hlx.live/developer/block-collection/embed
  */
 import { DOMPURIFY } from '../../scripts/aem.js';
-import { getYoutubeEmbedHtml, getVimeoEmbedHtml } from '../../scripts/utils.js';
+import { createYoutubeIframeWrapper, createVimeoIframeWrapper } from '../../scripts/utils.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -39,33 +39,40 @@ const loadEmbed = (block, link, autoplay) => {
     return;
   }
 
-  const EMBEDS_CONFIG = [
-    {
-      match: ['youtube', 'youtu.be'],
-      embed: (url, play) => getYoutubeEmbedHtml(url, play),
-    },
-    {
-      match: ['vimeo'],
-      embed: (url, play) => getVimeoEmbedHtml(url, play),
-    },
-    {
-      match: ['twitter', 'x.com'],
-      embed: embedTwitter,
-    },
-  ];
-  const config = EMBEDS_CONFIG.find((e) => e.match.some((match) => link.includes(match)));
   const url = new URL(link);
-  if (config) {
-    const embedHtml = config.embed(url, autoplay);
+  const isYoutube = link.includes('youtube') || link.includes('youtu.be');
+  const isVimeo = link.includes('vimeo');
+  const isTwitter = link.includes('twitter') || link.includes('x.com');
+
+  if (isYoutube) {
+    block.textContent = '';
+    block.append(createYoutubeIframeWrapper(url, autoplay, false));
+    block.className = 'block embed embed-youtube';
+    block.classList.add('embed-is-loaded');
+    return;
+  }
+
+  if (isVimeo) {
+    block.textContent = '';
+    block.append(createVimeoIframeWrapper(url, autoplay, false));
+    block.className = 'block embed embed-vimeo';
+    block.classList.add('embed-is-loaded');
+    return;
+  }
+
+  if (isTwitter) {
+    const embedHtml = embedTwitter(url);
     block.innerHTML = (window.DOMPurify?.sanitize(embedHtml, DOMPURIFY))
       ?? embedHtml;
-    block.classList = `block embed embed-${config.match[0]}`;
-  } else {
-    const defaultHtml = getDefaultEmbed(url);
-    block.innerHTML = (window.DOMPurify?.sanitize(defaultHtml, DOMPURIFY))
-      ?? defaultHtml;
-    block.classList = 'block embed';
+    block.classList = 'block embed embed-twitter';
+    block.classList.add('embed-is-loaded');
+    return;
   }
+
+  const defaultHtml = getDefaultEmbed(url);
+  block.innerHTML = (window.DOMPurify?.sanitize(defaultHtml, DOMPURIFY))
+    ?? defaultHtml;
+  block.className = 'block embed';
   block.classList.add('embed-is-loaded');
 };
 

@@ -1,4 +1,6 @@
 /* columns design tokens */
 :root {
-  --columns-gap: 24px;
+  --columns-gap: 28px;
+  --columns-youtube-mount-radius: 4px;
+  --columns-youtube-bg: transparent;
 }
