@@ -14,6 +14,7 @@ import {
   loadScript,
 } from './aem.js';
 import { createYoutubeIframeWrapper } from './utils.js';
+import decorateLastUpdatedStrip from './decorate-last-updated-strip.js';
 
 /** Max sections/children to process (CWE-770). */
 const MAX_SECTIONS = 100;
@@ -521,6 +522,7 @@ export function decorateMain(main) {
   decorateBlocks(main);
   decorateButtons(main);
   decorateTeachTopStrip(main);
+  decorateLastUpdatedStrip(main);
   a11yLinks(main);
 }
 
@@ -647,6 +649,7 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  decorateLastUpdatedStrip(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;

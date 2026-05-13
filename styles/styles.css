@@ -305,6 +305,29 @@ main .section.cards-container {
   }
 }
 
+/*
+ * “Last Updated …” strip — class from `decorateLastUpdatedStrip()` or section style `last-updated`.
+ * Eager CSS; bottom margin separates strip from following content (e.g. footer).
+ */
+main > .section.last-updated,
+footer .footer .section.last-updated {
+  margin-block: 0 30px;
+  padding-block: 0;
+}
+
+main > .section.last-updated > .default-content-wrapper,
+footer .footer .section.last-updated > .default-content-wrapper {
+  padding-block: 0;
+}
+
+main > .section.last-updated .default-content-wrapper > p,
+footer .footer .section.last-updated .default-content-wrapper > p {
+  margin-block: 0;
+  margin-inline: 0;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 /* section metadata */
 main .section.light,
 main .section.highlight {

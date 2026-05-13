@@ -9,6 +9,7 @@ import {
   loadSections,
 } from './aem.js';
 import { decorateRichtext } from './editor-support-rte.js';
+import decorateLastUpdatedStrip from './decorate-last-updated-strip.js';
 import { decorateMain, decorateSections, decorateButtons } from './scripts.js';
 
 function getState(block) {
@@ -78,6 +79,7 @@ async function applyChanges(event) {
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadSections(newMain);
+      decorateLastUpdatedStrip(newMain);
       element.remove();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
@@ -118,6 +120,7 @@ async function applyChanges(event) {
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           await loadSections(parentElement);
+          decorateLastUpdatedStrip(parentElement);
           element.remove();
           newSection.style.display = null;
         } else {
