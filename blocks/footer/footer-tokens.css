@@ -1,6 +1,21 @@
-/* footer design tokens */
+/* footer design tokens — layout + Stryker .g-footer palette (components.min.css) */
 :root {
   --footer-max-width: var(--max-width-site);
   --footer-padding: 40px 24px 24px;
   --footer-padding-desktop: 40px 32px 24px;
+
+  /* Stryker corporate footer chrome */
+  --stryker-footer-bg: #545857;
+  --stryker-footer-fg: #fff;
+  --stryker-footer-muted: #b2b4ae;
+  --stryker-footer-link-hover-fg: #000;
+  --stryker-footer-link-hover-bg: #ffb500;
+
+  /*
+   * Main 2×2 grid: tighter row = recall list closer to legal/social row; tighter column = legal ↔ social.
+   */
+  --stryker-footer-grid-row-gap: clamp(0.5rem, 1vw, 0.875rem);
+  --stryker-footer-grid-column-gap: clamp(0.375rem, 0.9vw, 1rem);
+  --stryker-footer-legal-font-size: clamp(0.6875rem, 0.18vw + 0.62rem, 0.75rem);
+  --stryker-footer-social-icon-size: clamp(44px, 5vw, 56px);
 }

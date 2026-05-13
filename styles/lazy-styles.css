@@ -11,7 +11,6 @@ main .section.golden {
    * zero padding-block or the hairline separates from padded content wrongly.
    */
   margin-block: 0;
-
   padding-inline: 0;
   background: transparent;
   color: var(--text-color);
@@ -94,7 +93,7 @@ main .section.golden .cards-wrapper:last-of-type {
  */
 main .section.columns-container {
   /* Brand yellow from spec (matches Stryker TEACH source yellow-gold) */
-  --stryker-teach-accent: rgb(255, 181, 0);
+  --stryker-teach-accent: rgb(255 181 0);
 }
 
 /* Eyebrow: full-width chip like source — white bar, soft perimeter shadow; “Talks:” serif, “Shoulder” sans bold gold */
@@ -154,4 +153,163 @@ main .section.columns-container .columns.columns-2-cols > div > div:not(.columns
 main .section.columns-container .columns.columns-2-cols > div > div:not(.columns-img-col) strong {
   font-weight: 700;
   font-family: inherit;
+}
+
+/*
+ * TEACH Talks header — authored as h1#home + course <p><a>…</a></p>* + trailing Dynamic Media wordmark paragraph.
+ * decorateTeachTopStrip adds .teach-top + markup when Section metadata Style is omitted.
+ */
+main .section.teach-top > .default-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--max-width-site);
+}
+
+main .section.teach-top .teach-top-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+/* Toolbar: HOME left, muted uppercase course links right, hairline underline */
+main .section.teach-top .teach-top-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: clamp(10px, 1.8vw, 14px);
+  margin-bottom: clamp(14px, 2.2vw, 22px);
+  border-bottom: 1px solid rgb(0 0 0 / 18%);
+}
+
+main .section.teach-top .teach-top-home {
+  flex: 0 0 auto;
+}
+
+main .section.teach-top .teach-top-home h1 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: var(--heading-font-family), sans-serif;
+  font-size: clamp(0.9688rem, 0.4vw + 0.845rem, 1.0625rem);
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+main .section.teach-top .teach-top-home h1 a {
+  color: var(--text-color);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.052em;
+}
+
+main .section.teach-top .teach-top-home h1 a:hover {
+  text-decoration: underline;
+}
+
+main .section.teach-top .teach-top-courses {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 0;
+  min-height: 1.5rem;
+}
+
+main .section.teach-top .teach-top-courses > li {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+main .section.teach-top .teach-top-courses > li + li::before {
+  content: '|';
+  color: rgb(0 0 0 / 34%);
+  font-weight: 400;
+  font-size: clamp(0.7813rem, 0.2vw + 0.69rem, 0.8438rem);
+  margin-inline: 0.5rem;
+  line-height: 1;
+  transform: translateY(-0.06em);
+}
+
+main .section.teach-top .teach-top-courses a {
+  font-family: var(--heading-font-family), sans-serif;
+  font-size: clamp(0.6875rem, 0.25vw + 0.595rem, 0.7656rem);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  color: rgb(0 0 0 / 45%);
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+main .section.teach-top .teach-top-courses a:hover {
+  text-decoration: underline;
+  color: var(--text-color);
+}
+
+main .section.teach-top .teach-top-more-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.375rem;
+  color: rgb(0 0 0 / 45%);
+}
+
+main .section.teach-top .teach-top-more-indicator::before {
+  content: '⋯';
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+/* Full-width branded banner artwork */
+main .section.teach-top .teach-wordmark {
+  margin: 0;
+  width: 100%;
+}
+
+main .section.teach-top .teach-wordmark a {
+  display: block;
+  line-height: 0;
+}
+
+main .section.teach-top .teach-wordmark picture,
+main .section.teach-top .teach-wordmark img {
+  display: block;
+}
+
+main .section.teach-top .teach-wordmark img {
+  width: 100%;
+  height: auto;
+}
+
+/* Draft / alternate manual markup kept for authoring experiments */
+main .section.teach-top:not(:has(.teach-top-shell)) .teach-local-nav ul {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.5rem 1.125rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+main .section.teach-top:not(:has(.teach-top-shell)) > .default-content-wrapper {
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.75rem;
+}
+
+main .section.teach-top:not(:has(.teach-top-shell)) .teach-wordmark img {
+  max-width: min(100%, 600px);
 }

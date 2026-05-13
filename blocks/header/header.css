@@ -1,16 +1,33 @@
 @import url('./header-tokens.css');
 
-/* header and nav layout */
+/* Masthead in-flow — scrolls with page like stryker.com (not fixed/sticky here). */
 header .nav-wrapper {
   background-color: var(--background-color);
+  border: none;
   width: 100%;
   z-index: 2;
-  position: fixed;
+  position: relative;
+}
+
+/* AEM sometimes adds header-wrapper — kill any stray chrome line under masthead */
+header.header-wrapper {
+  border: none;
+  box-shadow: none;
+}
+
+header.header-wrapper .nav-wrapper {
+  box-shadow: none;
+}
+
+header .header {
+  border: none;
+  box-shadow: none;
 }
 
 header nav {
   box-sizing: border-box;
   display: grid;
+  border: none;
   grid-template:
     'hamburger brand tools' var(--nav-height)
     'sections sections sections' 1fr / auto 1fr auto;
@@ -33,14 +50,10 @@ header nav[aria-expanded='true'] {
 }
 
 @media (width >= 900px) {
-  header nav {
-    display: flex;
-    justify-content: space-between;
-    gap: 0 var(--header-nav-gap-desktop);
-    max-width: var(--header-nav-max-width-desktop);
-    padding: var(--header-nav-padding-desktop);
-  }
-
+  /*
+   * Base desktop nav is overridden below by the Stryker three-band masthead (.nav stacked layout).
+   * Keep this block minimal so stacked rules can replace flex-axis behavior cleanly.
+   */
   header nav[aria-expanded='true'] {
     min-height: 0;
     overflow: visible;
@@ -54,6 +67,120 @@ header nav p {
 
 header nav a {
   color: currentcolor;
+}
+
+header nav .masthead-visually-hidden:not(:focus, :focus-within) {
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  position: absolute;
+}
+
+/* Masthead site search — present on all breakpoints; layout tuned in desktop block below */
+header nav .masthead-search {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 100%;
+  width: min(100%, var(--stryker-masthead-search-cap, 185px));
+  min-height: var(--stryker-masthead-search-height, 40px);
+}
+
+header nav .masthead-search-input {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  min-width: 0;
+  height: var(--stryker-masthead-search-height, 40px);
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  padding: 0 calc(var(--stryker-masthead-search-height, 40px) + 4px) 0 12px;
+  background-color: var(--stryker-search-bar-bg);
+  color: var(--text-color);
+  font-family: Cambria, 'Times New Roman', Times, Georgia, serif;
+  font-size: var(--stryker-search-input-font-size);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+header nav .masthead-search-input::placeholder {
+  color: rgb(0 0 0 / 45%);
+}
+
+header nav .masthead-search-input:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+header nav .masthead-search-submit {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--stryker-masthead-search-height, 40px);
+  height: var(--stryker-masthead-search-height, 40px);
+  margin: 0;
+  padding: 0;
+  margin-inline-start: calc(-1 * var(--stryker-masthead-search-height, 40px));
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--stryker-search-accent);
+}
+
+header nav .masthead-search-submit:hover {
+  color: var(--stryker-nav-primary-hover-bg);
+}
+
+header nav .masthead-search-submit:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+header nav .masthead-search-submit .icon {
+  margin: 0;
+  width: min(24px, calc(var(--stryker-masthead-search-height, 40px) * 0.58));
+  height: min(24px, calc(var(--stryker-masthead-search-height, 40px) * 0.58));
+  display: inline-flex;
+}
+
+header nav .masthead-search-submit .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+header nav .nav-brand .icon-globe {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(17px, 2vw, 19px);
+  height: clamp(17px, 2vw, 19px);
+  vertical-align: middle;
+}
+
+header nav .nav-brand .icon-globe img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Stable gap between globe wireframe and locale label (corp masthead reference) */
+header nav .nav-brand .default-content-wrapper > ul > li:last-child > a > .icon-globe {
+  margin-inline: 0 0.32rem;
 }
 
 /* hamburger */
@@ -141,8 +268,8 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 header .nav-brand {
   grid-area: brand;
   flex-basis: var(--header-brand-width);
-  font-size: var(--heading-font-size-s);
-  font-weight: 700;
+  font-size: var(--stryker-header-util-font-size, var(--body-font-size-s));
+  font-weight: 400;
   line-height: 1;
 }
 
@@ -181,6 +308,24 @@ header nav .nav-sections ul > li > ul {
 
 header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
+}
+
+/* Flyout / stacked child links — Stryker secondary-nav hover: gold bar + black text */
+header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a {
+  box-sizing: border-box;
+  display: block;
+  padding: 10px 8px;
+  margin-inline: calc(-1 * var(--header-dropdown-padding));
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a:hover,
+header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a:active {
+  background-color: var(--stryker-nav-dropdown-hover-bg);
+  color: var(--stryker-nav-dropdown-hover-color);
+  text-decoration: none;
 }
 
 @media (width >= 900px) {
@@ -261,7 +406,7 @@ header nav .nav-sections ul > li > ul > li {
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
-    padding: 8px 0;
+    padding: 0;
   }
 }
 
@@ -321,4 +466,346 @@ header .breadcrumbs ol li[aria-current] {
     max-width: var(--header-nav-max-width-desktop);
     padding: var(--header-nav-padding-desktop);
   }
+}
+
+/*
+ * ─── Stryker global masthead: three horizontal bands (desktop) ───
+ * Row 1: logo + compact utility rail (pipes). Row 2: full-bleed brand yellow primaries.
+ * Row 3: audience line, right-aligned. Search + locale globe: add authored nodes in nav-brand/tools.
+ */
+
+@media (width >= 900px) {
+  :root {
+    /* Approx. stacked masthead height for --header-height (carousel/modal); nav itself is height: auto. */
+    --nav-height: clamp(186px, 14.5vw, 208px);
+  }
+
+  header nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    width: 100%;
+    max-width: none;
+    margin-inline: auto;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+    color: var(--text-color);
+    font-family: var(--heading-font-family), sans-serif;
+  }
+
+  /* Row 1 — utility / logo strip */
+  header nav .nav-brand {
+    grid-area: unset;
+    flex: 0 0 auto;
+    width: 100%;
+    align-self: stretch;
+    padding-block: var(--header-row-brand-block);
+    padding-inline: 0;
+    margin: 0;
+    border: none;
+    background-color: var(--background-color);
+  }
+
+  header nav .nav-brand .default-content-wrapper {
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      minmax(
+        min(var(--stryker-masthead-search-grid-track-min, 160px), 100%),
+        var(--stryker-masthead-search-grid-track-max, 192px)
+      );
+    align-items: center;
+    gap: 12px clamp(20px, 3.25vw, 56px);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--max-width-site);
+    margin-inline: auto;
+    padding-inline: var(--header-nav-padding-desktop);
+  }
+
+  /* Logo block (“stryker”) — column 1 */
+  header nav .nav-brand .default-content-wrapper > p:first-of-type {
+    grid-column: 1;
+    grid-row: 1;
+    flex: unset;
+    margin: 0;
+    line-height: 0;
+  }
+
+  /*
+   * Brand utility icons excluding globe — `.icon-globe` needs fixed box sizing (corp wireframe glyph).
+   */
+  header nav .nav-brand .icon:not(.icon-globe) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: auto;
+    vertical-align: middle;
+  }
+
+  /*
+   * Logo only — do not target `.icon-globe`; it shares `.icon` and would inherit wordmark sizing.
+   */
+  header nav .nav-brand .icon-logo img {
+    width: var(--stryker-header-logo-width);
+    height: auto;
+    max-height: var(--stryker-masthead-search-height, 44px);
+    object-fit: contain;
+    display: block;
+  }
+
+  /*
+   * Row 1 — grid: logo (1) • utilities flushed right in stretch column (2) • fixed search lane (3)
+   */
+  header nav .nav-brand .default-content-wrapper > ul {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    min-width: 0;
+    flex: unset;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--heading-font-family), sans-serif;
+    font-size: var(--stryker-header-util-font-size);
+    font-weight: 400;
+    line-height: 1.32;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-color);
+  }
+
+  header nav .nav-brand .default-content-wrapper > ul > li {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  header nav .nav-brand .default-content-wrapper > ul > li + li::before {
+    content: '|';
+    color: rgb(0 0 0 / 38%);
+    font-weight: 400;
+    font-size: clamp(0.7188rem, 0.2vw + 0.65rem, 0.7813rem);
+    margin-inline: 0.5469rem;
+    line-height: 1;
+    transform: translateY(-0.04em);
+  }
+
+  header nav .nav-brand .default-content-wrapper > ul > li > a {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 0.2188rem;
+    font: inherit;
+    font-weight: 400;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  /* Locale row: small flex gap beside globe icon */
+  header nav .nav-brand .default-content-wrapper > ul > li:last-child > a {
+    column-gap: 0;
+  }
+
+  header nav .nav-brand .masthead-search {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    flex: unset;
+    width: 100%;
+    max-width: var(--stryker-masthead-search-desktop-max-width, 187px);
+    margin-inline-start: 0;
+  }
+
+  header nav .nav-brand,
+  header nav .nav-sections,
+  header nav .nav-tools {
+    border-block-end: none;
+  }
+
+  /* Row 2 — primary categories on brand yellow */
+  header nav .nav-sections {
+    grid-area: unset;
+    flex: 0 0 auto;
+    width: 100%;
+    align-self: stretch;
+    padding-block: var(--header-row-primary-block);
+    background-color: var(--stryker-header-primary-bg);
+    border-block: none;
+  }
+
+  header nav .nav-sections .default-content-wrapper {
+    box-sizing: border-box;
+    max-width: var(--max-width-site);
+    margin-inline: auto;
+    padding-inline: var(--header-nav-padding-desktop);
+    width: 100%;
+  }
+
+  header nav .nav-sections ul {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(12px, 2.05vw, 40px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    white-space: normal;
+    font-family: var(--heading-font-family), sans-serif;
+    font-size: var(--stryker-header-primary-font-size);
+    font-weight: 700;
+    line-height: 1.38;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-color);
+  }
+
+  header nav .nav-sections ul > li {
+    flex: 0 1 auto;
+    font-weight: 700;
+  }
+
+  header nav .nav-sections ul > li > a {
+    display: inline-block;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+    padding: 5px clamp(6px, 1vw, 15px);
+    white-space: nowrap;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  header nav .nav-sections ul > li > a:hover,
+  header nav .nav-sections ul > li > a:active {
+    background-color: var(--stryker-nav-primary-hover-bg);
+    color: var(--stryker-nav-primary-hover-color);
+    text-decoration: none;
+  }
+
+  header nav .nav-sections ul > li > a:focus-visible {
+    outline: 2px solid var(--link-color);
+    outline-offset: 2px;
+  }
+
+  header nav .nav-sections .nav-drop::after {
+    border-color: var(--text-color);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
+    border: 1px solid rgb(0 0 0 / 14%);
+    background-color: var(--stryker-nav-dropdown-panel-bg);
+    box-shadow: 0 10px 24px rgb(0 0 0 / 14%);
+    top: calc(100% + 10px);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
+    border-bottom-color: var(--stryker-nav-dropdown-panel-bg);
+  }
+
+  /* Row 3 — “Information for…” */
+  header nav .nav-tools {
+    grid-area: unset;
+    flex: 0 0 auto;
+    width: 100%;
+    align-self: stretch;
+    padding-block: var(--header-row-tools-block) var(--header-row-tools-padding-block-end, 16px);
+    background-color: var(--background-color);
+    border: none;
+    border-block-end: none;
+    box-shadow: none;
+  }
+
+  header nav .nav-tools .default-content-wrapper {
+    box-sizing: border-box;
+    max-width: var(--max-width-site);
+    margin-inline: auto;
+    padding-inline: var(--header-nav-padding-desktop);
+    width: 100%;
+    text-align: right;
+    color: var(--text-color);
+  }
+
+  header nav .nav-tools p {
+    margin: 0;
+    padding: 0;
+    font-family: Cambria, 'Times New Roman', Times, Georgia, serif;
+    font-size: var(--stryker-nav-tools-font-size, 21px);
+    font-weight: 400;
+    line-height: 1.42;
+    display: inline-block;
+    text-align: inherit;
+    max-width: 100%;
+  }
+
+  header nav .nav-tools p strong {
+    font-family: var(--heading-font-family), sans-serif;
+    font-weight: 700;
+    font-size: 1em;
+    letter-spacing: 0;
+    color: var(--text-color);
+  }
+
+  header nav .nav-tools a {
+    color: inherit;
+    text-decoration: none;
+    font-family: inherit;
+    transition: color 0.15s ease;
+  }
+
+  header nav .nav-tools a:hover,
+  header nav .nav-tools a:active {
+    color: var(--stryker-nav-utility-hover-color);
+    text-decoration: none;
+  }
+}
+
+/* Stryker clientlibs — utility rail hover (all viewports; .g-header .utility-links .text:hover). */
+header nav .nav-brand .default-content-wrapper > ul > li > a:hover,
+header nav .nav-brand .default-content-wrapper > ul > li > a:active {
+  color: var(--stryker-nav-utility-hover-color);
+  text-decoration: none;
+}
+
+@media (width < 900px) {
+  /* Stryker megamenu mobile: primary links — charcoal + white on hover/active. */
+  header nav .nav-sections ul > li > a {
+    box-sizing: border-box;
+    display: block;
+    padding: 12px 8px;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  header nav .nav-sections ul > li > a:hover,
+  header nav .nav-sections ul > li > a:active {
+    background-color: var(--stryker-nav-primary-hover-bg);
+    color: var(--stryker-nav-primary-hover-color);
+    text-decoration: none;
+  }
+
+  header nav .nav-sections ul > li > a:focus-visible {
+    outline: 2px solid var(--link-color);
+    outline-offset: 2px;
+  }
+}
+
+header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
 }

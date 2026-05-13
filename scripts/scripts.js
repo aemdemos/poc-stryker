@@ -153,6 +153,132 @@ function autolinkModals(doc) {
 }
 
 /**
+ * Computes absolute path for the vendored TEACH wordmark artefact (hlx.codeBasePath when set).
+ * @returns {string}
+ */
+function teachWordmarkImgSrc() {
+  const base = (window.hlx && window.hlx.codeBasePath) ? window.hlx.codeBasePath : '';
+  return `${base}/images/teach-talks-wordmark-hzn-1440.jpg`;
+}
+
+const TEACH_HOME_PATH = '/TEACH-TALKS-home-page';
+const TEACH_WORDMARK_SUBSTR = 'TEACH-talks-wordmark';
+
+/**
+ * Normalizes authored TEACH header default content into .teach-top layout (toolbar + picture).
+ * Expects h1#home, sibling course links as single-link paragraphs, and a trailing Dynamic Media URL link for the artwork.
+ *
+ * @param {Element} main
+ */
+export function decorateTeachTopStrip(main) {
+  const sections = [...main.querySelectorAll(':scope > .section')];
+  sections.forEach((section) => {
+    const wrapper = section.querySelector(':scope > .default-content-wrapper');
+    if (!(wrapper instanceof HTMLElement)) return;
+    if (wrapper.querySelector(':scope > .teach-top-shell')) return;
+
+    const h1Home = wrapper.querySelector(':scope > h1#home');
+    if (!h1Home) return;
+    const homeA = h1Home.querySelector(':scope > a[href]');
+    const homeHref = homeA.getAttribute('href') || '';
+    if (!homeHref.includes(TEACH_HOME_PATH)) return;
+
+    const kids = [...wrapper.children];
+    if (kids[0] !== h1Home) return;
+
+    const coursePs = [];
+    let wordMarkP = null;
+
+    for (let i = 1; i < kids.length; i += 1) {
+      const el = kids[i];
+      if (!(el instanceof HTMLParagraphElement)) break;
+      const a = el.querySelector(':scope > a[href]');
+      if (!(a instanceof HTMLAnchorElement)) break;
+      const { href } = a;
+      if (href.includes('is/image/stryker/') && href.includes(TEACH_WORDMARK_SUBSTR)) {
+        wordMarkP = el;
+        break;
+      }
+      coursePs.push(el);
+    }
+
+    if (!wordMarkP || coursePs.length === 0) return;
+
+    section.classList.add('teach-top');
+
+    const shell = document.createElement('div');
+    shell.className = 'teach-top-shell';
+
+    const strip = document.createElement('nav');
+    strip.className = 'teach-top-strip';
+    strip.setAttribute('aria-labelledby', 'home');
+
+    const homeWrap = document.createElement('div');
+    homeWrap.className = 'teach-top-home';
+    strip.append(homeWrap);
+
+    /** @type {HTMLElement} */
+    const hEl = h1Home;
+    homeWrap.append(hEl);
+
+    const ul = document.createElement('ul');
+    ul.className = 'teach-top-courses';
+
+    coursePs.forEach((p) => {
+      const aCourse = p.querySelector(':scope > a');
+      if (!aCourse || !p.parentElement) return;
+      const li = document.createElement('li');
+      li.append(aCourse);
+      p.remove();
+      ul.append(li);
+    });
+
+    /** Decorative overflow affordance matching source toolbar (ellipsis). Not interactive in this PoC. */
+    const moreLi = document.createElement('li');
+    moreLi.className = 'teach-top-more';
+    const moreHold = document.createElement('span');
+    moreHold.className = 'teach-top-more-indicator';
+    moreHold.setAttribute('aria-hidden', 'true');
+    moreLi.append(moreHold);
+
+    ul.append(moreLi);
+    strip.append(ul);
+
+    const wordWrap = document.createElement('div');
+    wordWrap.className = 'teach-wordmark';
+
+    const wmA = document.createElement('a');
+    wmA.href = homeA.href || homeA.getAttribute('href') || '#';
+    const pictureEl = document.createElement('picture');
+    const imgEl = document.createElement('img');
+    imgEl.src = teachWordmarkImgSrc();
+    imgEl.width = 1440;
+    imgEl.height = 297;
+    imgEl.loading = 'eager';
+    imgEl.decoding = 'async';
+    imgEl.fetchPriority = 'high';
+    const inheritLabel = `${homeA.getAttribute('aria-label') || ''}`.trim()
+      || homeA.textContent.trim();
+    if (inheritLabel) {
+      wmA.setAttribute('aria-label', inheritLabel);
+    }
+
+    imgEl.alt = '';
+
+    pictureEl.append(imgEl);
+    wmA.append(pictureEl);
+    wordWrap.append(wmA);
+
+    wordMarkP.remove();
+
+    shell.append(strip);
+    shell.append(wordWrap);
+
+    wrapper.replaceChildren(shell);
+  });
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -186,12 +312,26 @@ function buildAutoBlocks(main) {
 function a11yLinks(main) {
   const links = main.querySelectorAll('a');
   links.forEach((link) => {
-    let label = link.textContent;
+    let label = link.textContent.trim();
     if (!label && link.querySelector('span.icon')) {
       const icon = link.querySelector('span.icon');
       label = icon ? icon.classList[1]?.split('-')[1] : label;
     }
-    link.setAttribute('aria-label', label);
+    const imgInside = link.querySelector(':scope picture img');
+    if (!label && imgInside) {
+      const alt = `${imgInside.getAttribute('alt') || ''}`.trim();
+      if (alt) {
+        label = alt;
+      } else if (link.getAttribute('aria-label')) {
+        /** keep authored / decorateTeachTopStrip-supplied aria */
+        label = `${link.getAttribute('aria-label') || ''}`.trim();
+      }
+    }
+    if (label) {
+      link.setAttribute('aria-label', label);
+    } else {
+      link.removeAttribute('aria-label');
+    }
   });
 }
 
@@ -380,6 +520,7 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  decorateTeachTopStrip(main);
   a11yLinks(main);
 }
 

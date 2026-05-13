@@ -1,22 +1,190 @@
 @import url('./footer-tokens.css');
 
-footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+footer,
+footer.footer-wrapper {
+  margin: 0;
+  background-color: var(--stryker-footer-bg);
+}
+
+/*
+ * Fragment: `footer .footer > div` contains three `.section`s in order:
+ *   1 — legal + © (horizontal, pipes)
+ *   2 — social icons (row 1, right column; white icons)
+ *   3 — recall / secondary links (row 2, full width; vertical stack)
+ * Icons: `<span class="icon icon-youtube"></span>` in `<a>` (decorateIcons in footer.js).
+ */
+
+footer .footer {
+  box-sizing: border-box;
+  background-color: var(--stryker-footer-bg);
+  color: var(--stryker-footer-fg);
+  font-size: var(--stryker-footer-legal-font-size);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 footer .footer > div {
+  box-sizing: border-box;
   margin: auto;
   max-width: var(--footer-max-width);
   padding: var(--footer-padding);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: var(--stryker-footer-grid-row-gap) var(--stryker-footer-grid-column-gap);
+  align-items: start;
+}
+
+footer .footer > div > .section:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+footer .footer > div > .section:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+}
+
+footer .footer > div > .section:nth-child(3) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: start;
+  width: 100%;
 }
 
 footer .footer p {
   margin: 0;
 }
 
+footer .footer a {
+  color: var(--stryker-footer-fg);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+footer .footer a:hover,
+footer .footer a:active {
+  color: var(--stryker-footer-link-hover-fg);
+  background-color: var(--stryker-footer-link-hover-bg);
+}
+
+footer .footer a:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+footer .footer a:has(.icon):hover,
+footer .footer a:has(.icon):active {
+  background-color: transparent;
+  color: var(--stryker-footer-fg);
+  opacity: 0.88;
+}
+
+footer .footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+footer .footer .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--stryker-footer-social-icon-size);
+  height: var(--stryker-footer-social-icon-size);
+  vertical-align: middle;
+  color: var(--stryker-footer-fg);
+}
+
+/* SVGs as <img> do not inherit parent color; invert to white on dark footer. */
+footer .footer .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+/* Section 1 — horizontal legal row + pipe separators */
+footer .footer > div > .section:nth-child(1) .default-content-wrapper > ul > li:first-child {
+  text-transform: none;
+}
+
+footer .footer > div > .section:nth-child(1) .default-content-wrapper > ul {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0;
+}
+
+footer .footer > div > .section:nth-child(1) .default-content-wrapper > ul > li {
+  display: inline-flex;
+  align-items: center;
+}
+
+footer .footer > div > .section:nth-child(1) .default-content-wrapper > ul > li > a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  font-size: inherit;
+}
+
+footer .footer > div > .section:nth-child(1) .default-content-wrapper > ul > li + li::before {
+  content: '|';
+  color: var(--stryker-footer-fg);
+  font-weight: 400;
+  opacity: 0.85;
+  padding-inline: 0.15rem;
+  line-height: 1;
+}
+
+/* Section 2 — social icons (single row, end-aligned on wide viewports) */
+footer .footer > div > .section:nth-child(2) .default-content-wrapper > ul {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem 0.75rem;
+}
+
+/* Section 3 — vertical recall links (no pipes) */
+footer .footer > div > .section:nth-child(3) .default-content-wrapper > ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+footer .footer > div > .section:nth-child(3) .default-content-wrapper > ul > li > a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  font-size: inherit;
+}
+
 @media (width >= 900px) {
   footer .footer > div {
     padding: var(--footer-padding-desktop);
+  }
+}
+
+@media (width < 900px) {
+  footer .footer > div {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  footer .footer > div > .section:nth-child(1),
+  footer .footer > div > .section:nth-child(2),
+  footer .footer > div > .section:nth-child(3) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    place-self: stretch stretch;
+  }
+
+  footer .footer > div > .section:nth-child(2) .default-content-wrapper > ul {
+    justify-content: flex-start;
   }
 }

@@ -37,7 +37,7 @@ const PAGE_TEMPLATE = {
       id: 'section-1-teach-banner',
       name: 'TEACH Talks Banner',
       selector: 'div.standaloneimage',
-      style: null,
+      style: 'teach-top',
       blocks: [],
       defaultContent: ['div.standaloneimage .c-standalone-image-content'],
     },

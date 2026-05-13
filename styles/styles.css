@@ -93,8 +93,11 @@ body.appear {
   display: block;
 }
 
+/*
+ * Masthead is in-flow (see blocks/header/header.css); no fixed placeholder height needed.
+ */
 header {
-  height: var(--header-height);
+  height: auto;
 }
 
 header .header,

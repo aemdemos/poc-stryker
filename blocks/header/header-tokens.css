@@ -6,6 +6,47 @@
   --header-nav-padding-desktop: 0 32px;
   --header-nav-gap: 24px;
   --header-nav-gap-desktop: 32px;
+
+  /*
+   * Stryker masthead (desktop stacked): masthead intrinsic height helpers; carousel/modal use --header-height.
+   */
+  --header-row-brand-block: clamp(14px, 1.85vw, 18px);
+  --header-row-primary-block: clamp(16px, 2.35vw, 22px);
+
+  /*
+   * nav-tools: top = `--header-row-tools-block`; bottom = `--header-row-tools-padding-block-end`.
+   * `--stryker-nav-tools-font-size` — “Information for…” line.
+   */
+  --header-row-tools-block: 36px;
+  --header-row-tools-padding-block-end: 16px;
+  --stryker-nav-tools-font-size: 21px;
+
+  /*
+   * Stripe — primary nav (stryker.com reference ~ #ffb81c).
+   * Hover / active colors from Stryker clientlibs (components.min.css, .g-megamenu / .g-header).
+   */
+  --stryker-header-primary-bg: #ffb81c;
+  --stryker-nav-utility-hover-color: #af6d04;
+  --stryker-nav-primary-hover-bg: #545857;
+  --stryker-nav-primary-hover-color: #fff;
+  --stryker-nav-dropdown-hover-bg: #ffb500;
+  --stryker-nav-dropdown-hover-color: #000;
+  --stryker-nav-dropdown-panel-bg: #edeeec;
+  --stryker-search-bar-bg: #f2f2f2;
+  --stryker-search-accent: #006e62;
+
+  /*
+   * Search field vertical size — match corp masthead (~ logo cap height).
+   */
+  --stryker-masthead-search-height: clamp(36px, 4.2vw, 44px);
+
+  /*
+   * Search lane width (~60% of earlier ~308px / 312–320px track).
+   */
+  --stryker-masthead-search-cap: 185px;
+  --stryker-masthead-search-desktop-max-width: 187px;
+  --stryker-masthead-search-grid-track-min: 160px;
+  --stryker-masthead-search-grid-track-max: 192px;
   --header-brand-width: 128px;
   --header-dropdown-width: 200px;
   --header-dropdown-padding: 16px;
@@ -13,4 +54,18 @@
   --header-hamburger-size: 22px;
   --header-hamburger-bar-width: 20px;
   --header-hamburger-bar-height: 2px;
+
+  /*
+   * Wordmark/logo width in masthead utility row — SVG scales from intrinsic aspect ratio.
+   */
+  --stryker-header-logo-width: clamp(120px, 16.5vw, 162px);
+
+  /* Utility strip — regular weight uppercase sans */
+  --stryker-header-util-font-size: clamp(0.6844rem, 0.175vw + 0.607rem, 0.7594rem);
+
+  /* Yellow bar categories — uppercase sans bold */
+  --stryker-header-primary-font-size: clamp(0.6875rem, 0.22vw + 0.594rem, 0.7813rem);
+
+  /* Search field text / placeholder lineage (serif) */
+  --stryker-search-input-font-size: clamp(0.7344rem, 0.25vw + 0.603rem, 0.8594rem);
 }
