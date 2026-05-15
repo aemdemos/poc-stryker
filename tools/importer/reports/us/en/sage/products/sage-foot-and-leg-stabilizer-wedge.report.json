@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-foot-and-leg-stabilizer-wedge.html",
+  "path": "us/en/sage/products/sage-foot-and-leg-stabilizer-wedge",
+  "timestamp": "2026-05-11T14:37:58.168Z",
+  "title": "Sage Prevalon Foot and Leg Stabilizer Wedge | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-traptex.html",
+  "path": "us/en/sage/products/sage-traptex",
+  "timestamp": "2026-05-11T14:42:59.587Z",
+  "title": "Sage Traptex Plumbing Protection System | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-tap-lc.html",
+  "path": "us/en/sage/products/sage-tap-lc",
+  "timestamp": "2026-05-11T14:42:36.689Z",
+  "title": "Sage TAP LC | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

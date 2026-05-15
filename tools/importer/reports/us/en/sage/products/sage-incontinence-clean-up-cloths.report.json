@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-incontinence-clean-up-cloths.html",
+  "path": "us/en/sage/products/sage-incontinence-clean-up-cloths",
+  "timestamp": "2026-05-11T14:39:10.898Z",
+  "title": "Sage Incontinence Clean-up Cloths | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

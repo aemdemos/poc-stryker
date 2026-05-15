@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-tap-1-0.html",
+  "path": "us/en/sage/products/sage-tap-1-0",
+  "timestamp": "2026-05-11T14:42:12.099Z",
+  "title": "Sage Prevalon Turn and Position System (TAP) 1.0 | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-air-pump.html",
+  "path": "us/en/sage/products/sage-air-pump",
+  "timestamp": "2026-05-07T10:57:28.484Z",
+  "title": "Sage Prevalon Air Pump - 120V | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

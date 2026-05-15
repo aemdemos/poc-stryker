@@ -1,0 +1,123 @@
+{
+  "templates": [
+    {
+      "name": "sage-product-page",
+      "description": "Stryker Sage product detail pages with hero, overview, contact form, and resources",
+      "urls": [
+        "https://www.stryker.com/us/en/sage/products/sage-air-pump.html"
+      ],
+      "blocks": [
+        {
+          "name": "hcp-banner",
+          "instances": [".g-hcpbanner"]
+        },
+        {
+          "name": "hero",
+          "instances": [".c-autocarousel"]
+        },
+        {
+          "name": "sticky-nav",
+          "instances": [".c-navigation-bar"]
+        },
+        {
+          "name": "columns-overview",
+          "instances": [".cols2 > .colctrl"]
+        },
+        {
+          "name": "cards",
+          "instances": [".cols3"]
+        },
+        {
+          "name": "did-you-know",
+          "instances": [".experiencefragment:has(.bg-dark-blue-gradient)"]
+        },
+        {
+          "name": "faq-accordion",
+          "instances": [".panel-group"]
+        },
+        {
+          "name": "connect-banner",
+          "instances": [".cols > .colctrl:has(.has-background)"]
+        },
+        {
+          "name": "form",
+          "instances": [".marketoform"]
+        },
+        {
+          "name": "tabs-resources",
+          "instances": [".c-tabs"]
+        },
+        {
+          "name": "columns-resources",
+          "instances": [".experiencefragment .xf-content-height:has(#sage)"]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-hcp-banner",
+          "name": "HCP Banner",
+          "selector": ".g-hcpbanner",
+          "style": "",
+          "blocks": ["hcp-banner"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-hero",
+          "name": "Hero",
+          "selector": ".c-autocarousel",
+          "style": "",
+          "blocks": ["hero"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-sticky-nav",
+          "name": "Sticky Nav",
+          "selector": ".c-navigation-bar",
+          "style": "",
+          "blocks": ["sticky-nav"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-overview",
+          "name": "Overview",
+          "selector": ".cols2",
+          "style": "",
+          "blocks": ["columns-overview"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-connect-banner",
+          "name": "Connect Banner",
+          "selector": ".cols > .colctrl",
+          "style": "",
+          "blocks": ["connect-banner"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-form",
+          "name": "Form",
+          "selector": ".marketoform",
+          "style": "",
+          "blocks": ["form"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-tabs",
+          "name": "Resources Tabs",
+          "selector": ".c-tabs",
+          "style": "",
+          "blocks": ["tabs-resources"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-resources-footer",
+          "name": "Resources Footer",
+          "selector": ".experiencefragment .xf-content-height:has(#sage)",
+          "style": "",
+          "blocks": ["columns-resources"],
+          "defaultContent": []
+        }
+      ]
+    }
+  ]
+}

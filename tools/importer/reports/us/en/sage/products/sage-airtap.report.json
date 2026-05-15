@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-airtap.html",
+  "path": "us/en/sage/products/sage-airtap",
+  "timestamp": "2026-05-11T14:37:08.204Z",
+  "title": "Sage Prevalon AirTAP Patient Repositioning System | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "did-you-know",
+    "faq-accordion",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

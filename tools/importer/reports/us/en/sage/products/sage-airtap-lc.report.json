@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-airtap-lc.html",
+  "path": "us/en/sage/products/sage-airtap-lc",
+  "timestamp": "2026-05-11T11:25:39.690Z",
+  "title": "Sage AirTAP LC Lift Compatible Patient Repositioning System | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "cards",
+    "did-you-know",
+    "faq-accordion",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

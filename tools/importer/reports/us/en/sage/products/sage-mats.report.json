@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-mats.html",
+  "path": "us/en/sage/products/sage-mats",
+  "timestamp": "2026-05-11T14:39:45.852Z",
+  "title": "Sage Prevalon Mobile Air Transfer System (MATS) | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "cards",
+    "did-you-know",
+    "faq-accordion",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

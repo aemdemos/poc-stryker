@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-oral-hygiene-systems-for-non-ventilated-patients.html",
+  "path": "us/en/sage/products/sage-oral-hygiene-systems-for-non-ventilated-patients",
+  "timestamp": "2026-05-11T14:40:22.208Z",
+  "title": "Sage oral hygiene systems for non-ventilated patients | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "cards",
+    "cards",
+    "connect-banner",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

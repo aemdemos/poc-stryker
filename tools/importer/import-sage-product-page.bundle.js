@@ -1,0 +1,826 @@
+/* eslint-disable */
+var CustomImportScript = (() => {
+  var __defProp = Object.defineProperty;
+  var __defProps = Object.defineProperties;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
+  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // tools/importer/import-sage-product-page.js
+  var import_sage_product_page_exports = {};
+  __export(import_sage_product_page_exports, {
+    default: () => import_sage_product_page_default
+  });
+
+  // tools/importer/parsers/hcp-banner.js
+  function parse(element, { document }) {
+    const h3 = element.querySelector("h3");
+    const text = h3 ? h3.textContent.trim() : "Information for healthcare professionals";
+    const contentCell = document.createElement("div");
+    const p = document.createElement("p");
+    p.textContent = text;
+    contentCell.appendChild(p);
+    const cells = [
+      ["HCP Banner"],
+      [contentCell]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/hero.js
+  function resolveImageUrl(img, document) {
+    const src = img ? img.src : "";
+    if (!src) return src;
+    if (src.includes("/content/dam/")) return src;
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage && ogImage.content) {
+      return ogImage.content;
+    }
+    if (src.includes("media-assets.stryker.com/is/image/")) {
+      return src.split("?")[0];
+    }
+    return src;
+  }
+  function parse2(element, { document }) {
+    const img = element.querySelector(".c-standalone-image img");
+    const overlay = element.querySelector(".overlayparsys");
+    const h1 = overlay ? overlay.querySelector("h1") : element.querySelector("h1");
+    const h2 = overlay ? overlay.querySelector("h2") : element.querySelector("h2");
+    const desc = overlay ? overlay.querySelector("p") : null;
+    const cta = overlay ? overlay.querySelector(".curatedcta a, a.btn") : element.querySelector("a.btn");
+    const contentCell = document.createElement("div");
+    if (h1) contentCell.appendChild(h1.cloneNode(true));
+    if (h2) contentCell.appendChild(h2.cloneNode(true));
+    if (desc) contentCell.appendChild(desc.cloneNode(true));
+    if (cta) contentCell.appendChild(cta.cloneNode(true));
+    const cells = [["Hero"]];
+    if (img) {
+      const imgClone = document.createElement("img");
+      imgClone.src = resolveImageUrl(img, document);
+      imgClone.alt = img.alt || "";
+      cells.push([imgClone, contentCell]);
+    } else {
+      cells.push([contentCell]);
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/sticky-nav.js
+  function parse3(element, { document }) {
+    const anchors = element.querySelectorAll("a.anchor[data-linking]");
+    const items = [];
+    anchors.forEach((anchor) => {
+      const text = anchor.textContent.trim();
+      const linking = anchor.getAttribute("data-linking");
+      if (text && !anchor.classList.contains("mobile-only-nav")) {
+        items.push({ text, linking });
+      }
+    });
+    if (items.length === 0) return;
+    const contentCell = document.createElement("div");
+    items.forEach((item) => {
+      const p = document.createElement("p");
+      const a = document.createElement("a");
+      a.href = `#${item.linking}`;
+      a.textContent = item.text;
+      p.appendChild(a);
+      contentCell.appendChild(p);
+    });
+    const cells = [
+      ["Sticky Nav"],
+      [contentCell]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/columns-overview.js
+  function parse4(element, { document, url, params }) {
+    const columns = element.querySelectorAll('.row > [class*="col-"]');
+    if (columns.length < 2) return;
+    const leftCol = columns[0];
+    const rightCol = columns[1];
+    const leftContent = document.createElement("div");
+    const leftRte = leftCol.querySelector(".c-rich-text-editor div[style]");
+    if (leftRte) {
+      Array.from(leftRte.children).forEach((child) => {
+        leftContent.appendChild(child.cloneNode(true));
+      });
+    }
+    const rightContent = document.createElement("div");
+    const rightRte = rightCol.querySelector(".c-rich-text-editor div[style]");
+    if (rightRte) {
+      Array.from(rightRte.children).forEach((child) => {
+        rightContent.appendChild(child.cloneNode(true));
+      });
+    }
+    const videoAsset = rightCol.querySelector("[data-asset-path]");
+    if (videoAsset) {
+      const assetPath = videoAsset.getAttribute("data-asset-path") || "";
+      const viewerPath = videoAsset.getAttribute("data-viewer-path") || "https://media-assets.stryker.com/s7viewers/";
+      const imageServer = videoAsset.getAttribute("data-imageserver") || "https://media-assets.stryker.com/is/image/";
+      const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+      if (assetPath) {
+        const videoUrl = `${viewerPath}html5/VideoViewer.html?asset=${assetPath}&serverurl=${imageServer}&videoserverurl=${videoServer}`;
+        const p = document.createElement("p");
+        const a = document.createElement("a");
+        a.href = videoUrl;
+        a.textContent = videoUrl;
+        p.appendChild(a);
+        rightContent.appendChild(p);
+      }
+    }
+    const cells = [
+      ["Columns"],
+      [leftContent, rightContent]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/cards.js
+  var ICON_MAP = {
+    "Patient%20Transfer_Icon": "inbed-positioning",
+    "Patient%20Repositioning_Icon": "lateral-transfer",
+    "Patient%20Lifting_Icon": "vertical-transfer",
+    "Patient Transfer_Icon": "inbed-positioning",
+    "Patient Repositioning_Icon": "lateral-transfer",
+    "Patient Lifting_Icon": "vertical-transfer"
+  };
+  function getIconName(src) {
+    if (!src) return null;
+    const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+    if (!match) return null;
+    return ICON_MAP[match[1]] || ICON_MAP[decodeURIComponent(match[1])] || null;
+  }
+  function parse5(element, { document }) {
+    if (element.closest(".c-tabs, .tab-content")) return;
+    const cards = element.querySelectorAll('.col-xs-12[class*="col-sm"], .col-xs-12[class*="col-md"]');
+    if (cards.length === 0) return;
+    const cells = [["Cards"]];
+    cards.forEach((card) => {
+      const img = card.querySelector("img");
+      const paragraphs = card.querySelectorAll("p");
+      const title = paragraphs[0] ? paragraphs[0].textContent.trim() : "";
+      const description = paragraphs[1] ? paragraphs[1].textContent.trim() : "";
+      const contentCell = document.createElement("div");
+      if (title) {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = title;
+        p.appendChild(strong);
+        contentCell.appendChild(p);
+      }
+      if (description) {
+        const p = document.createElement("p");
+        p.textContent = description;
+        contentCell.appendChild(p);
+      }
+      if (img) {
+        const iconName = getIconName(img.src || "");
+        if (iconName) {
+          const iconCell = document.createElement("div");
+          const p = document.createElement("p");
+          p.textContent = `:${iconName}:`;
+          iconCell.appendChild(p);
+          cells.push([iconCell, contentCell]);
+        } else {
+          const imgEl = document.createElement("img");
+          imgEl.src = (img.src || "").split("?")[0];
+          imgEl.alt = img.alt || title;
+          cells.push([imgEl, contentCell]);
+        }
+      } else {
+        cells.push([contentCell]);
+      }
+    });
+    const prevSibling = element.previousElementSibling;
+    let headingText = "";
+    if (prevSibling && (prevSibling.classList.contains("cols") || prevSibling.querySelector(".sectionseparator"))) {
+      const h2El = prevSibling.querySelector("h2");
+      if (h2El) {
+        headingText = h2El.textContent.trim();
+      }
+      prevSibling.remove();
+    }
+    const container = document.createElement("div");
+    if (headingText) {
+      const h2 = document.createElement("h2");
+      h2.textContent = headingText;
+      container.appendChild(h2);
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    container.appendChild(table);
+    element.replaceWith(container);
+  }
+
+  // tools/importer/parsers/did-you-know.js
+  function parse6(element, { document }) {
+    const xfContent = element.querySelector(".xf-content-height");
+    if (!xfContent) return;
+    const img = xfContent.querySelector("img");
+    const rightBlock = xfContent.querySelector('.aem-GridColumn--default--9, [class*="GridColumn--default--9"]');
+    if (!rightBlock) return;
+    const rightContent = document.createElement("div");
+    const h2 = rightBlock.querySelector("h2");
+    if (h2) {
+      const heading = document.createElement("h2");
+      heading.textContent = h2.textContent.trim();
+      rightContent.appendChild(heading);
+    }
+    const statContainers = rightBlock.querySelectorAll(".buildingblock .c-rich-text-editor div[style]");
+    statContainers.forEach((container) => {
+      const statNumber = container.querySelector(".fontsize-3em, .fontsize-2-5em, .futura-bold");
+      const statDesc = container.querySelectorAll("p");
+      if (statNumber && statDesc.length > 1) {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = statNumber.textContent.trim();
+        p.appendChild(strong);
+        p.appendChild(document.createTextNode(` \u2014 ${statDesc[statDesc.length - 1].textContent.trim()}`));
+        rightContent.appendChild(p);
+      }
+    });
+    const list = rightBlock.querySelector("ul");
+    if (list) {
+      rightContent.appendChild(list.cloneNode(true));
+    }
+    const rteContainers = rightBlock.querySelectorAll(".c-rich-text-editor div[style]");
+    rteContainers.forEach((rte) => {
+      const paragraphs = rte.querySelectorAll("p");
+      paragraphs.forEach((p) => {
+        const link = p.querySelector("a");
+        if (link && link.textContent.includes("Learn more")) {
+          const ctaP = document.createElement("p");
+          const a = document.createElement("a");
+          a.href = link.href;
+          a.textContent = link.textContent.trim();
+          ctaP.appendChild(a);
+          rightContent.appendChild(ctaP);
+        } else if (p.textContent.trim().length > 50 && !p.querySelector(".futura-bold")) {
+          const descP = document.createElement("p");
+          descP.textContent = p.textContent.trim();
+          rightContent.appendChild(descP);
+        }
+      });
+    });
+    const leftContent = document.createElement("div");
+    if (img) {
+      const imgEl = document.createElement("img");
+      const src = (img.src || "").split("?")[0];
+      imgEl.src = src.includes("media-assets.stryker.com") ? src.replace("media-assets.stryker.com", "www.stryker.com") : src;
+      imgEl.alt = img.alt || "";
+      leftContent.appendChild(imgEl);
+    }
+    const cells = [
+      ["Columns"],
+      [leftContent, rightContent]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/faq-accordion.js
+  function parse7(element, { document }) {
+    const panels = element.querySelectorAll('[id^="collapse_"]');
+    if (panels.length === 0) return;
+    const cells = [["Accordion"]];
+    panels.forEach((panel) => {
+      const panelId = panel.id;
+      const link = element.querySelector(`a[href="#${panelId}"]`);
+      const question = link ? link.textContent.trim() : "";
+      const answer = panel.textContent.trim();
+      if (question && answer) {
+        cells.push([question, answer]);
+      }
+    });
+    if (cells.length <= 1) return;
+    const container = document.createElement("div");
+    const prevSibling = element.previousElementSibling;
+    if (prevSibling && prevSibling.tagName === "H3" && prevSibling.textContent.includes("FAQ")) {
+      const h3 = document.createElement("h3");
+      h3.textContent = prevSibling.textContent.trim();
+      container.appendChild(h3);
+      prevSibling.remove();
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    container.appendChild(table);
+    element.replaceWith(container);
+  }
+
+  // tools/importer/parsers/connect-banner.js
+  function parse8(element, { document }) {
+    const rte = element.querySelector(".has-background");
+    if (!rte) return;
+    const contentCell = document.createElement("div");
+    Array.from(rte.children).forEach((child) => {
+      contentCell.appendChild(child.cloneNode(true));
+    });
+    let style = "";
+    if (rte.classList.contains("bg-gold")) style = "gold";
+    else if (rte.classList.contains("bg-black")) style = "dark";
+    const blockName = style ? `Banner (${style})` : "Banner";
+    const cells = [
+      [blockName],
+      [contentCell]
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/form.js
+  function parse9(element, { document }) {
+    const form = element.querySelector('form[id^="mktoForm_"]');
+    if (!form) return;
+    const cells = [["Contact Form"]];
+    const fieldWraps = form.querySelectorAll(".mktoFieldWrap");
+    fieldWraps.forEach((fieldWrap) => {
+      const labelEl = fieldWrap.querySelector("label");
+      if (!labelEl) return;
+      const labelText = labelEl.textContent.replace(/^\*/, "").trim();
+      if (!labelText) return;
+      const input = fieldWrap.querySelector('input:not([type="hidden"]):not([type="checkbox"]), select, textarea');
+      const checkbox = fieldWrap.querySelector(".mktoCheckboxList");
+      const isRequired = fieldWrap.classList.contains("mktoRequiredField");
+      const fieldLabel = isRequired ? `${labelText} *` : labelText;
+      if (input) {
+        let fieldType = "text";
+        if (input.tagName === "SELECT") fieldType = "select";
+        else if (input.tagName === "TEXTAREA") fieldType = "textarea";
+        else if (input.type === "email") fieldType = "email";
+        let typeValue = fieldType;
+        if (input.tagName === "SELECT") {
+          const options = [...input.querySelectorAll("option")].filter((opt) => opt.value && !opt.disabled).map((opt) => opt.textContent.trim());
+          if (options.length > 0) typeValue = `${fieldType}|${options.join(",")}`;
+        }
+        cells.push([fieldLabel, typeValue]);
+      } else if (checkbox) {
+        const checkLabel = checkbox.querySelector("label");
+        if (checkLabel) {
+          cells.push([`${checkLabel.textContent.trim()} *`, "checkbox"]);
+        }
+      }
+    });
+    const submitBtn = form.querySelector('button[type="submit"], .mktoButton');
+    if (submitBtn) {
+      cells.push([submitBtn.textContent.trim(), "submit"]);
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/tabs-resources.js
+  function parse10(element, { document }) {
+    const tabLinks = element.querySelectorAll(".tab-link");
+    const tabContents = element.querySelectorAll(".tab-content");
+    if (tabLinks.length === 0) return;
+    const cells = [["Tabs"]];
+    tabLinks.forEach((link, index) => {
+      const label = link.textContent.trim();
+      const content = tabContents[index];
+      const contentCell = document.createElement("div");
+      if (content) {
+        const resources = content.querySelectorAll(".c-resourcesanddownload .item, .resourcesanddownload .item");
+        resources.forEach((item) => {
+          const itemLink = item.querySelector("a[href]");
+          const title = item.querySelector("h5, .title");
+          const img = item.querySelector("img");
+          if (itemLink && title) {
+            if (img) {
+              const imgEl = document.createElement("img");
+              imgEl.src = img.src;
+              imgEl.alt = img.alt || title.textContent.trim();
+              contentCell.appendChild(imgEl);
+            }
+            const p = document.createElement("p");
+            const a = document.createElement("a");
+            a.href = itemLink.href;
+            a.textContent = title.textContent.trim();
+            p.appendChild(a);
+            contentCell.appendChild(p);
+          }
+        });
+        const videos = content.querySelectorAll(".standalonevideo");
+        videos.forEach((video) => {
+          const videoTitle = video.querySelector("h3, .desc-content h3");
+          const videoAsset = video.querySelector("[data-asset-path]");
+          if (videoAsset) {
+            const assetPath = videoAsset.getAttribute("data-asset-path") || "";
+            const viewerPath = videoAsset.getAttribute("data-viewer-path") || "https://media-assets.stryker.com/s7viewers/";
+            const imageServer = videoAsset.getAttribute("data-imageserver") || "https://media-assets.stryker.com/is/image/";
+            const videoServer = videoAsset.getAttribute("data-videoserver") || "https://media-assets.stryker.com/is/content/";
+            if (videoTitle) {
+              const h = document.createElement("h3");
+              h.textContent = videoTitle.textContent.trim();
+              contentCell.appendChild(h);
+            }
+            if (assetPath) {
+              const videoUrl = `${viewerPath}html5/VideoViewer.html?asset=${assetPath}&serverurl=${imageServer}&videoserverurl=${videoServer}`;
+              const p = document.createElement("p");
+              const a = document.createElement("a");
+              a.href = videoUrl;
+              a.textContent = videoUrl;
+              p.appendChild(a);
+              contentCell.appendChild(p);
+            }
+          }
+        });
+      }
+      if (contentCell.children.length > 0) {
+        cells.push([label, contentCell]);
+      }
+    });
+    if (cells.length <= 1) {
+      element.remove();
+      return;
+    }
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/parsers/columns-resources.js
+  function parse11(element, { document }) {
+    const sectionTitle = element.querySelector("#sage h2, .c-section-title h2");
+    const buildingBlocks = element.querySelectorAll(".buildingblock .c-rich-text-editor div[style]");
+    if (buildingBlocks.length < 3) return;
+    if (sectionTitle) {
+      const h2 = document.createElement("h2");
+      h2.textContent = sectionTitle.textContent.trim();
+      element.parentNode.insertBefore(h2, element);
+    }
+    const columnCells = [];
+    const startIdx = buildingBlocks.length - 3;
+    for (let i = startIdx; i < buildingBlocks.length; i++) {
+      const block = buildingBlocks[i];
+      const colContent = document.createElement("div");
+      Array.from(block.children).forEach((child) => {
+        colContent.appendChild(child.cloneNode(true));
+      });
+      columnCells.push(colContent);
+    }
+    const cells = [
+      ["Columns"],
+      columnCells
+    ];
+    const table = WebImporter.DOMUtils.createTable(cells, document);
+    element.replaceWith(table);
+  }
+
+  // tools/importer/transformers/cleanup.js
+  function transform(hookName, element, payload) {
+    const { document } = payload;
+    if (hookName === "beforeTransform") {
+      const selectorsToRemove = [
+        "footer",
+        ".breadcrumb",
+        "#product-detail-container",
+        ".c-tiles",
+        ".c-cross-promotional",
+        "script",
+        "style",
+        'link[rel="stylesheet"]',
+        "noscript",
+        "iframe",
+        '[style*="display:none"]',
+        "#localNav",
+        "#localNavBgColor",
+        "#trans",
+        "#localNavTextColor",
+        "#firstItem",
+        "#hcpcheckbox",
+        "#hcptextcolor",
+        "#hcpTag",
+        ".slider-nav",
+        ".slick-dots",
+        ".global-header",
+        ".g-megamenu",
+        ".g-footer"
+      ];
+      selectorsToRemove.forEach((selector) => {
+        element.querySelectorAll(selector).forEach((el) => el.remove());
+      });
+      const hcpBanner = element.querySelector(".g-hcpbanner");
+      if (hcpBanner && hcpBanner.closest("header")) {
+        const header = hcpBanner.closest("header");
+        header.parentNode.insertBefore(hcpBanner, header);
+      }
+      element.querySelectorAll("header").forEach((el) => el.remove());
+      element.querySelectorAll("nav").forEach((nav) => {
+        const parent = nav.parentNode;
+        if (parent && (parent.closest(".c-navigation-bar") || parent.closest(".c-tabs"))) return;
+        if (nav.closest(".c-navigation-bar") || nav.closest(".c-tabs")) return;
+        nav.remove();
+      });
+      element.querySelectorAll('[class*="cookie"], [class*="consent"], [id*="onetrust"]').forEach((el) => el.remove());
+      const body = document.body;
+      if (body) {
+        body.style.removeProperty("overflow");
+      }
+    }
+    if (hookName === "afterTransform") {
+      element.querySelectorAll('[aria-hidden="true"]').forEach((el) => {
+        if (!el.closest("table")) el.remove();
+      });
+      const iconMap = {
+        LinkedIn_100x100: "linkedin",
+        facebook_logo_100x100: "facebook"
+      };
+      element.querySelectorAll("img").forEach((img) => {
+        const src = img.src || img.getAttribute("src") || "";
+        if (src.includes("media-assets.stryker.com/is/image/stryker/")) {
+          const match = src.match(/\/is\/image\/stryker\/([^?]+)/);
+          if (match && iconMap[match[1]]) {
+            const link = img.closest("a");
+            if (link) {
+              link.textContent = `:${iconMap[match[1]]}:`;
+            } else {
+              img.replaceWith(document.createTextNode(`:${iconMap[match[1]]}:`));
+            }
+          } else if (!img.closest("table")) {
+            img.src = src.replace("media-assets.stryker.com", "www.stryker.com").split("?")[0];
+          }
+        }
+      });
+      element.querySelectorAll("div:empty").forEach((el) => {
+        if (!el.closest("table")) el.remove();
+      });
+    }
+  }
+
+  // tools/importer/transformers/sections.js
+  function transform2(hookName, element, payload) {
+    if (hookName !== "afterTransform") return;
+    const { document } = payload;
+    const main = element;
+    const tables = main.querySelectorAll(":scope > div > table, :scope table");
+    const blockTables = [];
+    const walk = (node) => {
+      if (node.tagName === "TABLE") {
+        blockTables.push(node);
+        return;
+      }
+      if (node.children) {
+        Array.from(node.children).forEach(walk);
+      }
+    };
+    Array.from(main.children).forEach((child) => {
+      if (child.tagName === "TABLE") {
+        blockTables.push(child);
+      } else {
+        child.querySelectorAll("table").forEach((t) => blockTables.push(t));
+      }
+    });
+    let first = true;
+    blockTables.forEach((table) => {
+      const firstCell = table.querySelector("tr td, tr th");
+      if (firstCell && firstCell.textContent.trim().toLowerCase() === "metadata") return;
+      if (first) {
+        first = false;
+        return;
+      }
+      const hr = document.createElement("hr");
+      table.parentNode.insertBefore(hr, table);
+    });
+  }
+
+  // tools/importer/import-sage-product-page.js
+  var parsers = {
+    "hcp-banner": parse,
+    "hero": parse2,
+    "sticky-nav": parse3,
+    "columns-overview": parse4,
+    "cards": parse5,
+    "did-you-know": parse6,
+    "faq-accordion": parse7,
+    "connect-banner": parse8,
+    "form": parse9,
+    "tabs-resources": parse10,
+    "columns-resources": parse11
+  };
+  var transformers = [
+    transform,
+    transform2
+  ];
+  var PAGE_TEMPLATE = {
+    name: "sage-product-page",
+    description: "Stryker Sage product detail pages with hero, overview, contact form, and resources",
+    urls: [
+      "https://www.stryker.com/us/en/sage/products/sage-air-pump.html"
+    ],
+    blocks: [
+      {
+        name: "hcp-banner",
+        instances: [".g-hcpbanner"]
+      },
+      {
+        name: "hero",
+        instances: [".c-autocarousel"]
+      },
+      {
+        name: "sticky-nav",
+        instances: [".c-navigation-bar"]
+      },
+      {
+        name: "columns-overview",
+        instances: [".cols2 > .colctrl"]
+      },
+      {
+        name: "cards",
+        instances: [".cols3"]
+      },
+      {
+        name: "did-you-know",
+        instances: [".experiencefragment:has(.bg-dark-blue-gradient)"]
+      },
+      {
+        name: "faq-accordion",
+        instances: [".panel-group"]
+      },
+      {
+        name: "connect-banner",
+        instances: [".cols > .colctrl:has(.has-background)"]
+      },
+      {
+        name: "form",
+        instances: [".marketoform"]
+      },
+      {
+        name: "tabs-resources",
+        instances: [".c-tabs"]
+      },
+      {
+        name: "columns-resources",
+        instances: [".experiencefragment .xf-content-height:has(#sage)"]
+      }
+    ],
+    sections: [
+      {
+        id: "section-hcp-banner",
+        name: "HCP Banner",
+        selector: ".g-hcpbanner",
+        style: "",
+        blocks: ["hcp-banner"],
+        defaultContent: []
+      },
+      {
+        id: "section-hero",
+        name: "Hero",
+        selector: ".c-autocarousel",
+        style: "",
+        blocks: ["hero"],
+        defaultContent: []
+      },
+      {
+        id: "section-sticky-nav",
+        name: "Sticky Nav",
+        selector: ".c-navigation-bar",
+        style: "",
+        blocks: ["sticky-nav"],
+        defaultContent: []
+      },
+      {
+        id: "section-overview",
+        name: "Overview",
+        selector: ".cols2",
+        style: "",
+        blocks: ["columns-overview"],
+        defaultContent: []
+      },
+      {
+        id: "section-connect-banner",
+        name: "Connect Banner",
+        selector: ".cols > .colctrl",
+        style: "",
+        blocks: ["connect-banner"],
+        defaultContent: []
+      },
+      {
+        id: "section-form",
+        name: "Form",
+        selector: ".marketoform",
+        style: "",
+        blocks: ["form"],
+        defaultContent: []
+      },
+      {
+        id: "section-tabs",
+        name: "Resources Tabs",
+        selector: ".c-tabs",
+        style: "",
+        blocks: ["tabs-resources"],
+        defaultContent: []
+      },
+      {
+        id: "section-resources-footer",
+        name: "Resources Footer",
+        selector: ".experiencefragment .xf-content-height:has(#sage)",
+        style: "",
+        blocks: ["columns-resources"],
+        defaultContent: []
+      }
+    ]
+  };
+  function executeTransformers(hookName, element, payload) {
+    const enhancedPayload = __spreadProps(__spreadValues({}, payload), {
+      template: PAGE_TEMPLATE
+    });
+    transformers.forEach((transformerFn) => {
+      try {
+        transformerFn.call(null, hookName, element, enhancedPayload);
+      } catch (e) {
+        console.error(`Transformer failed at ${hookName}:`, e);
+      }
+    });
+  }
+  function findBlocksOnPage(document, template) {
+    const pageBlocks = [];
+    template.blocks.forEach((blockDef) => {
+      blockDef.instances.forEach((selector) => {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length === 0) {
+          console.warn(`Block "${blockDef.name}" selector not found: ${selector}`);
+        }
+        elements.forEach((element) => {
+          pageBlocks.push({
+            name: blockDef.name,
+            selector,
+            element,
+            section: blockDef.section || null
+          });
+        });
+      });
+    });
+    console.log(`Found ${pageBlocks.length} block instances on page`);
+    return pageBlocks;
+  }
+  var import_sage_product_page_default = {
+    transform: (payload) => {
+      const { document, url, html, params } = payload;
+      const main = document.body;
+      executeTransformers("beforeTransform", main, payload);
+      const pageBlocks = findBlocksOnPage(document, PAGE_TEMPLATE);
+      pageBlocks.forEach((block) => {
+        const parser = parsers[block.name];
+        if (parser) {
+          try {
+            parser(block.element, { document, url, params });
+          } catch (e) {
+            console.error(`Failed to parse ${block.name} (${block.selector}):`, e);
+          }
+        } else {
+          console.warn(`No parser found for block: ${block.name}`);
+        }
+      });
+      executeTransformers("afterTransform", main, payload);
+      const hr = document.createElement("hr");
+      main.appendChild(hr);
+      WebImporter.rules.createMetadata(main, document);
+      WebImporter.rules.transformBackgroundImages(main, document);
+      WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
+      const path = WebImporter.FileUtils.sanitizePath(
+        new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html$/, "")
+      );
+      return [{
+        element: main,
+        path,
+        report: {
+          title: document.title,
+          template: PAGE_TEMPLATE.name,
+          blocks: pageBlocks.map((b) => b.name)
+        }
+      }];
+    }
+  };
+  return __toCommonJS(import_sage_product_page_exports);
+})();

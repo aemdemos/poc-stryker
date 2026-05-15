@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-bath-cloths.html",
+  "path": "us/en/sage/products/sage-bath-cloths",
+  "timestamp": "2026-05-11T14:37:33.144Z",
+  "title": "Sage Bath Cloths | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "cards",
+    "cards",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.stryker.com/us/en/sage/products/sage-m--microclimate-body-pads.html",
+  "path": "us/en/sage/products/sage-m-microclimate-body-pads",
+  "timestamp": "2026-05-11T14:39:23.002Z",
+  "title": "Sage M² Microclimate Body Pads | Stryker",
+  "template": "sage-product-page",
+  "blocks": [
+    "hcp-banner",
+    "hero",
+    "sticky-nav",
+    "columns-overview",
+    "connect-banner",
+    "form",
+    "tabs-resources",
+    "columns-resources"
+  ]
+}
